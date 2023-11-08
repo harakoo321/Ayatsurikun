@@ -10,19 +10,15 @@ public interface DeviceService {
         ITEMS.add(item);
     }
 
-    static DeviceItem createPlaceholderItem(int position) {
-        return new DeviceItem(String.valueOf(position), "Item " + position, "");
-    }
-
     public static class DeviceItem {
-        public final String id;
-        public final String content;
-        public final String details;
+        public final String vendorId;
+        public final String productId;
+        public final String deviceName;
 
-        public DeviceItem(String id, String content, String details) {
-            this.id = id;
-            this.content = content;
-            this.details = details;
+        public DeviceItem(String vendorId, String productId, String deviceName) {
+            this.vendorId = vendorId;
+            this.productId = productId;
+            this.deviceName = deviceName;
         }
     }
 }

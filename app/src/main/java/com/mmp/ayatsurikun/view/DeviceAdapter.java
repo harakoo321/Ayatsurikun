@@ -1,5 +1,6 @@
 package com.mmp.ayatsurikun.view;
 
+import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -11,7 +12,6 @@ import android.view.ViewGroup;
 import com.mmp.ayatsurikun.R;
 import com.mmp.ayatsurikun.databinding.DeviceItemBinding;
 import com.mmp.ayatsurikun.model.DeviceService;
-import com.mmp.ayatsurikun.model.DeviceService.DeviceItem;
 import com.mmp.ayatsurikun.viewmodel.DeviceItemViewModel;
 
 import java.util.List;
@@ -26,8 +26,14 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceView
         this.context = context;
     }
 
+    public void setItemsAndRefresh(List<DeviceService.DeviceItem> items) {
+        this.items = items;
+        notifyDataSetChanged();
+    }
+
+    @NonNull
     @Override
-    public DeviceViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public DeviceViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         DeviceItemBinding binding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.device_item, parent, false);
         binding.setViewModel(new DeviceItemViewModel(view));
         return new DeviceViewHolder(binding.getRoot(), binding.getViewModel());
@@ -36,10 +42,14 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceView
     @Override
     public void onBindViewHolder(final DeviceViewHolder holder, int position) {
         final DeviceService.DeviceItem item = items.get(position);
+        holder.loadItem(item);
     }
 
     @Override
     public int getItemCount() {
+        if (items == null) {
+            return 0;
+        }
         return items.size();
     }
 
@@ -49,6 +59,10 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceView
         public DeviceViewHolder(View itemView, DeviceItemViewModel viewModel) {
             super(itemView);
             this.viewModel = viewModel;
+        }
+
+        public void loadItem(DeviceService.DeviceItem item) {
+            viewModel.loadItem(item);
         }
     }
 }
