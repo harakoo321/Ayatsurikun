@@ -1,61 +1,69 @@
 package com.mmp.ayatsurikun.view;
 
+import androidx.annotation.NonNull;
+import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
-import com.mmp.ayatsurikun.view.placeholder.PlaceholderContent.PlaceholderItem;
-import com.mmp.ayatsurikun.databinding.FragmentDeviceBinding;
+import com.mmp.ayatsurikun.R;
+import com.mmp.ayatsurikun.contract.DeviceListViewContract;
+import com.mmp.ayatsurikun.databinding.DeviceItemBinding;
+import com.mmp.ayatsurikun.model.DeviceScanner;
+import com.mmp.ayatsurikun.viewmodel.DeviceItemViewModel;
 
 import java.util.List;
 
-/**
- * {@link RecyclerView.Adapter} that can display a {@link PlaceholderItem}.
- * TODO: Replace the implementation with code for your data type.
- */
-public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.ViewHolder> {
+public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceViewHolder> {
+    private final DeviceListViewContract view;
+    private final Context context;
+    private List<DeviceScanner.DeviceItem> items;
 
-    private final List<PlaceholderItem> mValues;
+    public DeviceAdapter(Context context, DeviceListViewContract view) {
+        this.view = view;
+        this.context = context;
+    }
 
-    public DeviceAdapter(List<PlaceholderItem> items) {
-        mValues = items;
+    public void setItemsAndRefresh(List<DeviceScanner.DeviceItem> items) {
+        this.items = items;
+        notifyDataSetChanged();
+    }
+
+    @NonNull
+    @Override
+    public DeviceViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        DeviceItemBinding binding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.device_item, parent, false);
+        binding.setViewModel(new DeviceItemViewModel(view));
+        return new DeviceViewHolder(binding.getRoot(), binding.getViewModel());
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
-        return new ViewHolder(FragmentDeviceBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
-
-    }
-
-    @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).id);
-        holder.mContentView.setText(mValues.get(position).content);
+    public void onBindViewHolder(final DeviceViewHolder holder, final int position) {
+        final DeviceScanner.DeviceItem item = items.get(position);
+        holder.loadItem(item);
     }
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        if (items == null) {
+            return 0;
+        }
+        return items.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        public final TextView mIdView;
-        public final TextView mContentView;
-        public PlaceholderItem mItem;
+    public static class DeviceViewHolder extends RecyclerView.ViewHolder {
+        private final DeviceItemViewModel viewModel;
 
-        public ViewHolder(FragmentDeviceBinding binding) {
-            super(binding.getRoot());
-            mIdView = binding.itemNumber;
-            mContentView = binding.content;
+        public DeviceViewHolder(View itemView, DeviceItemViewModel viewModel) {
+            super(itemView);
+            this.viewModel = viewModel;
         }
 
-        @Override
-        public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+        public void loadItem(DeviceScanner.DeviceItem item) {
+            viewModel.loadItem(item);
         }
     }
 }
