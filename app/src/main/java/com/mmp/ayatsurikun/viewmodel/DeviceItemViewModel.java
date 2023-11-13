@@ -12,7 +12,7 @@ public class DeviceItemViewModel extends ViewModel {
     public MutableLiveData<String> vendorId = new MutableLiveData<>();
     public MutableLiveData<String> productName = new MutableLiveData<>();
     public MutableLiveData<String> deviceName = new MutableLiveData<>();
-    DeviceListViewContract view;
+    private final DeviceListViewContract view;
 
     public DeviceItemViewModel(DeviceListViewContract view) {
         this.view = view;
@@ -25,6 +25,6 @@ public class DeviceItemViewModel extends ViewModel {
     }
 
     public void onItemClick(View itemView) {
-
+        view.startSignalButtonsActivity(deviceName.getValue());
     }
 }

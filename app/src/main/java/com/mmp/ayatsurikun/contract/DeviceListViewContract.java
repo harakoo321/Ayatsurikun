@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface DeviceListViewContract {
     void showDevices(List<DeviceScanner.DeviceItem> deviceItems);
+    void startSignalButtonsActivity(String deviceName);
 }

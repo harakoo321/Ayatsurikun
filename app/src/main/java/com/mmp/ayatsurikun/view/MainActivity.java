@@ -49,4 +49,9 @@ public class MainActivity extends AppCompatActivity implements DeviceListViewCon
     public void showDevices(List<DeviceScanner.DeviceItem> deviceItems) {
         deviceAdapter.setItemsAndRefresh(deviceItems);
     }
+
+    @Override
+    public void startSignalButtonsActivity(String deviceName) {
+        SignalButtonsActivity.start(this, deviceName);
+    }
 }
