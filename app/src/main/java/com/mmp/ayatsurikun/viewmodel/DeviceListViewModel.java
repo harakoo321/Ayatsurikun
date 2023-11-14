@@ -3,7 +3,7 @@ package com.mmp.ayatsurikun.viewmodel;
 import androidx.lifecycle.ViewModel;
 
 import com.mmp.ayatsurikun.contract.DeviceListViewContract;
-import com.mmp.ayatsurikun.model.DeviceScanner;
+import com.mmp.ayatsurikun.model.scanner.DeviceScanner;
 
 import java.util.List;
 
@@ -18,5 +18,9 @@ public class DeviceListViewModel extends ViewModel {
     public void loadDevices() {
         List<DeviceScanner.DeviceItem> deviceItems = deviceScanner.scanDevices(deviceListView);
         deviceListView.showDevices(deviceItems);
+    }
+
+    public int getBaudRate() {
+        return deviceScanner.getBaudRate();
     }
 }

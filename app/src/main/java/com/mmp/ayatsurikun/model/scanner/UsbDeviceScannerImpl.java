@@ -1,15 +1,14 @@
-package com.mmp.ayatsurikun.model;
+package com.mmp.ayatsurikun.model.scanner;
 
 import android.app.Activity;
 import android.content.Context;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
 
-import com.hoho.android.usbserial.driver.FtdiSerialDriver;
-import com.hoho.android.usbserial.driver.ProbeTable;
 import com.hoho.android.usbserial.driver.UsbSerialDriver;
 import com.hoho.android.usbserial.driver.UsbSerialProber;
 import com.mmp.ayatsurikun.contract.DeviceListViewContract;
+import com.mmp.ayatsurikun.model.CustomProber;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,28 +30,26 @@ public class UsbDeviceScannerImpl implements DeviceScanner {
             if(driver != null) {
                 for(int port = 0; port < driver.getPorts().size(); port++) {
                     deviceItems.add(new DeviceItem(
-                            Integer.toString(device.getVendorId()),
-                            Integer.toString(port),
+                            driver.getClass().getSimpleName(),
+                            port,
                             device.getProductName(),
-                            driver.getClass().getSimpleName()));
+                            device.getDeviceName(),
+                            device.getDeviceId()));
                 }
             } else {
                 deviceItems.add(new DeviceItem(
-                        Integer.toString(device.getVendorId()),
-                        "0",
+                        "",
+                        0,
                         device.getProductName(),
-                        ""));
+                        device.getDeviceName(),
+                        device.getDeviceId()));
             }
         }
         return deviceItems;
     }
 
-    static class CustomProber {
-        private static UsbSerialProber getCustomProber() {
-            ProbeTable customTable = new ProbeTable();
-            customTable.addProduct(0x1234, 0x0001, FtdiSerialDriver.class); // e.g. device with custom VID+PID
-            customTable.addProduct(0x1234, 0x0002, FtdiSerialDriver.class); // e.g. device with custom VID+PID
-            return new UsbSerialProber(customTable);
-        }
+    @Override
+    public int getBaudRate() {
+        return baudRate;
     }
 }

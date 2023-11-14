@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import com.mmp.ayatsurikun.R;
 import com.mmp.ayatsurikun.contract.DeviceListViewContract;
 import com.mmp.ayatsurikun.databinding.DeviceItemBinding;
-import com.mmp.ayatsurikun.model.DeviceScanner;
+import com.mmp.ayatsurikun.model.scanner.DeviceScanner;
 import com.mmp.ayatsurikun.viewmodel.DeviceItemViewModel;
 
 import java.util.List;
