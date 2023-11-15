@@ -17,11 +17,11 @@ import com.hoho.android.usbserial.driver.UsbSerialDriver;
 import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.hoho.android.usbserial.driver.UsbSerialProber;
 import com.hoho.android.usbserial.util.SerialInputOutputManager;
-import com.hoho.android.usbserial.BuildConfig;
 import com.mmp.ayatsurikun.contract.SignalButtonsContract;
 import com.mmp.ayatsurikun.model.CustomProber;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
 public class UsbConnectorImpl implements DeviceConnector, SerialInputOutputManager.Listener {
     private enum UsbPermission { Unknown, Requested, Granted, Denied }
@@ -35,6 +35,7 @@ public class UsbConnectorImpl implements DeviceConnector, SerialInputOutputManag
     private final SignalButtonsContract contract;
     private final int deviceId, portNum, baudRate;
     private boolean connected = false;
+    private byte[] signal;
     public UsbConnectorImpl(SignalButtonsContract contract, int deviceId, int portNum, int baudRate) {
         this.contract = contract;
         this.deviceId = deviceId;
@@ -153,14 +154,13 @@ public class UsbConnectorImpl implements DeviceConnector, SerialInputOutputManag
     }
 
     @Override
-    public void send(String str) {
+    public void send(byte[] signal) {
         if(!connected) {
             Toast.makeText((Activity)contract, "not connected", Toast.LENGTH_SHORT).show();
             return;
         }
         try {
-            byte[] data = (str + '\n').getBytes();
-            usbSerialPort.write(data, WRITE_WAIT_MILLIS);
+            usbSerialPort.write(signal, WRITE_WAIT_MILLIS);
 
         } catch (Exception e) {
             onRunError(e);
@@ -168,7 +168,26 @@ public class UsbConnectorImpl implements DeviceConnector, SerialInputOutputManag
     }
 
     private void receive(byte[] data) {
-        contract.addText("receive:" + new String(data) + "\n");
+        if ((char) data[data.length - 1] != '\0') {
+            if (signal == null) signal = data;
+            else {
+                ByteBuffer byteBuffer = ByteBuffer.allocate(signal.length + data.length);
+                byteBuffer.put(signal);
+                byteBuffer.put(data);
+                signal = byteBuffer.array();
+            }
+        }
+        else {
+            if (signal == null) signal = data;
+            else {
+                ByteBuffer byteBuffer = ByteBuffer.allocate(signal.length + data.length);
+                byteBuffer.put(signal);
+                byteBuffer.put(data);
+                signal = byteBuffer.array();
+            }
+            contract.addText("receive:" + new String(signal) + "\n");
+            signal = null;
+        }
     }
 
     void status(String str) {

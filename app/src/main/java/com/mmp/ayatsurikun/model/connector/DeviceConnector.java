@@ -4,5 +4,5 @@ public interface DeviceConnector {
     void setUp();
     void connect();
     void disconnect();
-    void send(String str);
+    void send(byte[] signal);
 }
