@@ -42,14 +42,18 @@ public class SignalButtonsActivity extends AppCompatActivity implements SignalBu
                 intent.getIntExtra(EXTRA_BAUD_RATE, 0));
         binding.setViewModel(viewModel);
         binding.setLifecycleOwner(this);
-
-        Log.i("Selected", "" + intent.getIntExtra(EXTRA_DEVICE_ID, 0));
     }
 
     @Override
     public void onResume() {
         super.onResume();
         viewModel.setUp();
+    }
+
+    @Override
+    public void onPause() {
+        viewModel.disconnect();
+        super.onPause();
     }
 
     @Override

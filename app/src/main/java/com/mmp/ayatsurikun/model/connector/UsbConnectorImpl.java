@@ -25,7 +25,7 @@ import java.io.IOException;
 
 public class UsbConnectorImpl implements DeviceConnector, SerialInputOutputManager.Listener {
     private enum UsbPermission { Unknown, Requested, Granted, Denied }
-    private static final String INTENT_ACTION_GRANT_USB = BuildConfig.LIBRARY_PACKAGE_NAME + ".GRANT_USB";
+    private static final String INTENT_ACTION_GRANT_USB = "com.mmp.ayaturikun.GRANT_USB";
     private static final int WRITE_WAIT_MILLIS = 2000;
     private UsbPermission usbPermission = UsbPermission.Unknown;
     private UsbSerialPort usbSerialPort;
@@ -33,7 +33,6 @@ public class UsbConnectorImpl implements DeviceConnector, SerialInputOutputManag
     private final BroadcastReceiver broadcastReceiver;
     private final Handler mainLooper;
     private final SignalButtonsContract contract;
-    private final ControlLines controlLines;
     private final int deviceId, portNum, baudRate;
     private boolean connected = false;
     public UsbConnectorImpl(SignalButtonsContract contract, int deviceId, int portNum, int baudRate) {
@@ -52,7 +51,6 @@ public class UsbConnectorImpl implements DeviceConnector, SerialInputOutputManag
             }
         };
         mainLooper = new Handler(Looper.getMainLooper());
-        controlLines = new ControlLines();
     }
 
     @Override
@@ -73,7 +71,7 @@ public class UsbConnectorImpl implements DeviceConnector, SerialInputOutputManag
      */
     @Override
     public void setUp() {
-        ((Activity)contract).registerReceiver(broadcastReceiver, new IntentFilter(INTENT_ACTION_GRANT_USB));
+        ((Activity)contract).registerReceiver(broadcastReceiver, new IntentFilter(INTENT_ACTION_GRANT_USB), Context.RECEIVER_NOT_EXPORTED);
 
         if(usbPermission == UsbPermission.Unknown || usbPermission == UsbPermission.Granted)
             mainLooper.post(this::connect);
@@ -131,25 +129,27 @@ public class UsbConnectorImpl implements DeviceConnector, SerialInputOutputManag
             usbIoManager.start();
             status("connected");
             connected = true;
-            controlLines.start();
         } catch (Exception e) {
             status("connection failed: " + e.getMessage());
             disconnect();
         }
     }
 
-    private void disconnect() {
-        connected = false;
-        controlLines.stop();
-        if(usbIoManager != null) {
-            usbIoManager.setListener(null);
-            usbIoManager.stop();
+    @Override
+    public void disconnect() {
+        if(connected) {
+            connected = false;
+            ((Activity)contract).unregisterReceiver(broadcastReceiver);
+            if(usbIoManager != null) {
+                usbIoManager.setListener(null);
+                usbIoManager.stop();
+            }
+            usbIoManager = null;
+            try {
+                usbSerialPort.close();
+            } catch (IOException ignored) {}
+            usbSerialPort = null;
         }
-        usbIoManager = null;
-        try {
-            usbSerialPort.close();
-        } catch (IOException ignored) {}
-        usbSerialPort = null;
     }
 
     @Override
@@ -173,34 +173,5 @@ public class UsbConnectorImpl implements DeviceConnector, SerialInputOutputManag
 
     void status(String str) {
         contract.addText(str + "\n");
-    }
-
-    class ControlLines {
-        private static final int refreshInterval = 200; // msec
-
-        private final Runnable runnable;
-
-        ControlLines() {
-            runnable = this::run; // w/o explicit Runnable, a new lambda would be created on each postDelayed, which would not be found again by removeCallbacks
-        }
-
-        private void run() {
-            if (!connected)
-                return;
-            try {
-                mainLooper.postDelayed(runnable, refreshInterval);
-            } catch (Exception e) {
-                status("getControlLines() failed: " + e.getMessage() + " -> stopped control line refresh");
-            }
-        }
-
-        void start() {
-            if (!connected) return;
-            run();
-        }
-
-        void stop() {
-            mainLooper.removeCallbacks(runnable);
-        }
     }
 }

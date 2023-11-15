@@ -25,4 +25,8 @@ public class SignalButtonsViewModel extends ViewModel {
     public void setUp() {
         deviceConnector.setUp();
     }
+
+    public void disconnect() {
+        deviceConnector.disconnect();
+    }
 }
