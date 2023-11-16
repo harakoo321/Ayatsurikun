@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Ayatsurikun</string>
+    <string name="btn_send">送信</string>
+    <string name="dialog_title">ボタンの追加</string>
+    <string name="dialog_msg">信号を受信しました。ボタンを追加するにはボタンの名前を設定してください。</string>
+    <string name="dialog_btn_ok">追加</string>
+    <string name="dialog_btn_ng">キャンセル</string>
 </resources>
