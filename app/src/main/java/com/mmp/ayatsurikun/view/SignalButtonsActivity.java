@@ -42,13 +42,16 @@ public class SignalButtonsActivity extends AppCompatActivity implements SignalBu
                 intent.getIntExtra(EXTRA_BAUD_RATE, 0));
         binding.setViewModel(viewModel);
         binding.setLifecycleOwner(this);
+        viewModel.getSignal().observe(this, bytes -> {
+            viewModel.setSignal(bytes);
+            startAddButtonDialog();
+        });
     }
 
     @Override
     public void onResume() {
         super.onResume();
         viewModel.setUp();
-        startAddButtonDialog();
     }
 
     @Override

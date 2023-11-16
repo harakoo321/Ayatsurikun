@@ -13,6 +13,9 @@ import android.os.Handler;
 import android.os.Looper;
 import android.widget.Toast;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+
 import com.hoho.android.usbserial.driver.UsbSerialDriver;
 import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.hoho.android.usbserial.driver.UsbSerialProber;
@@ -35,7 +38,8 @@ public class UsbConnectorImpl implements DeviceConnector, SerialInputOutputManag
     private final SignalButtonsContract contract;
     private final int deviceId, portNum, baudRate;
     private boolean connected = false;
-    private byte[] signal;
+    private MutableLiveData<byte[]> signal = new MutableLiveData<>();
+    private byte[] data;
     public UsbConnectorImpl(SignalButtonsContract contract, int deviceId, int portNum, int baudRate) {
         this.contract = contract;
         this.deviceId = deviceId;
@@ -167,26 +171,23 @@ public class UsbConnectorImpl implements DeviceConnector, SerialInputOutputManag
         }
     }
 
+    @Override
+    public LiveData<byte[]> getSignal() {
+        return this.signal;
+    }
+
     private void receive(byte[] data) {
-        if ((char) data[data.length - 1] != '\0') {
-            if (signal == null) signal = data;
-            else {
-                ByteBuffer byteBuffer = ByteBuffer.allocate(signal.length + data.length);
-                byteBuffer.put(signal);
-                byteBuffer.put(data);
-                signal = byteBuffer.array();
-            }
-        }
+        if (this.data == null) this.data = data;
         else {
-            if (signal == null) signal = data;
-            else {
-                ByteBuffer byteBuffer = ByteBuffer.allocate(signal.length + data.length);
-                byteBuffer.put(signal);
-                byteBuffer.put(data);
-                signal = byteBuffer.array();
-            }
-            contract.addText("receive:" + new String(signal) + "\n");
-            signal = null;
+            ByteBuffer byteBuffer = ByteBuffer.allocate(this.data.length + data.length);
+            byteBuffer.put(this.data);
+            byteBuffer.put(data);
+            this.data = byteBuffer.array();
+        }
+        if ((char) data[data.length - 1] == '\0') {
+            contract.addText("receive:" + new String(this.data) + "\n");
+            signal.postValue(this.data);
+            this.data = null;
         }
     }
 
