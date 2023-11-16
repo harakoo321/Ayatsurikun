@@ -2,6 +2,7 @@ package com.mmp.ayatsurikun.view;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
@@ -12,7 +13,7 @@ import android.view.ViewGroup;
 import com.mmp.ayatsurikun.R;
 import com.mmp.ayatsurikun.contract.DeviceListViewContract;
 import com.mmp.ayatsurikun.databinding.DeviceItemBinding;
-import com.mmp.ayatsurikun.model.DeviceScanner;
+import com.mmp.ayatsurikun.model.scanner.DeviceScanner;
 import com.mmp.ayatsurikun.viewmodel.DeviceItemViewModel;
 
 import java.util.List;
@@ -32,17 +33,22 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceView
         notifyDataSetChanged();
     }
 
+    public DeviceScanner.DeviceItem getItemAt(int position) {
+        return items.get(position);
+    }
+
     @NonNull
     @Override
     public DeviceViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         DeviceItemBinding binding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.device_item, parent, false);
         binding.setViewModel(new DeviceItemViewModel(view));
+        binding.setLifecycleOwner((LifecycleOwner) view);
         return new DeviceViewHolder(binding.getRoot(), binding.getViewModel());
     }
 
     @Override
     public void onBindViewHolder(final DeviceViewHolder holder, final int position) {
-        final DeviceScanner.DeviceItem item = items.get(position);
+        final DeviceScanner.DeviceItem item = getItemAt(position);
         holder.loadItem(item);
     }
 
