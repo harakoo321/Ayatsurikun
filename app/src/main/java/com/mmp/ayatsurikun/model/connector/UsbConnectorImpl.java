@@ -29,7 +29,7 @@ import java.nio.ByteBuffer;
 public class UsbConnectorImpl implements DeviceConnector, SerialInputOutputManager.Listener {
     private enum UsbPermission { Unknown, Requested, Granted, Denied }
     private static final String INTENT_ACTION_GRANT_USB = "com.mmp.ayaturikun.GRANT_USB";
-    private static final int WRITE_WAIT_MILLIS = 2000;
+    private static final int WRITE_WAIT_MILLIS = 20;
     private UsbPermission usbPermission = UsbPermission.Unknown;
     private UsbSerialPort usbSerialPort;
     private SerialInputOutputManager usbIoManager;
@@ -202,8 +202,8 @@ public class UsbConnectorImpl implements DeviceConnector, SerialInputOutputManag
             byteBuffer.put(data);
             this.data = byteBuffer.array();
         }
-        if ((char) data[data.length - 1] == '\0') {
-            contract.addText("receive:" + new String(this.data) + "\n");
+        if ((char) data[data.length - 1] == '\n') {
+            contract.addText("receive:" + new String(this.data));
             signal.postValue(this.data);
             this.data = null;
         }
