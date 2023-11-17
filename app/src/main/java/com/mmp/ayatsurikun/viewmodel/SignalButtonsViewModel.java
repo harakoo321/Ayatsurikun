@@ -42,7 +42,7 @@ public class SignalButtonsViewModel extends ViewModel {
     }
 
     public void onSignalButtonClick(String text) {
-        contract.addText("send:" + text + "\n");
+        contract.addText("send:" + new String(signalHashMap.get(text)) + "\n");
         deviceConnector.send(signalHashMap.get(text));
     }
 

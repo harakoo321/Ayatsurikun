@@ -76,7 +76,11 @@ public class UsbConnectorImpl implements DeviceConnector, SerialInputOutputManag
      */
     @Override
     public void setUp() {
-        ((Activity)contract).registerReceiver(broadcastReceiver, new IntentFilter(INTENT_ACTION_GRANT_USB), Context.RECEIVER_NOT_EXPORTED);
+        ((Activity)contract).registerReceiver(
+                broadcastReceiver,
+                new IntentFilter(INTENT_ACTION_GRANT_USB),
+                Context.RECEIVER_NOT_EXPORTED
+        );
 
         if(usbPermission == UsbPermission.Unknown || usbPermission == UsbPermission.Granted)
             mainLooper.post(this::connect);
@@ -107,12 +111,26 @@ public class UsbConnectorImpl implements DeviceConnector, SerialInputOutputManag
             return;
         }
         usbSerialPort = driver.getPorts().get(portNum);
-        UsbDeviceConnection usbConnection = usbManager.openDevice(driver.getDevice());
+        UsbDeviceConnection usbConnection = null;
+        try{
+            usbConnection = usbManager.openDevice(driver.getDevice());
+        } catch (SecurityException e) {
+            status("connection failed: permission denied");
+        }
         if(usbConnection == null && usbPermission == UsbPermission.Unknown && !usbManager.hasPermission(driver.getDevice())) {
             usbPermission = UsbPermission.Requested;
             int flags = PendingIntent.FLAG_MUTABLE;
-            PendingIntent usbPermissionIntent = PendingIntent.getBroadcast((Activity)contract, 0, new Intent(INTENT_ACTION_GRANT_USB), flags);
-            usbManager.requestPermission(driver.getDevice(), usbPermissionIntent);
+            try {
+                PendingIntent usbPermissionIntent = PendingIntent.getBroadcast(
+                        (Activity)contract,
+                        0,
+                        new Intent(INTENT_ACTION_GRANT_USB),
+                        flags
+                );
+                usbManager.requestPermission(driver.getDevice(), usbPermissionIntent);
+            } catch (IllegalArgumentException e) {
+                status("request permission failed: please reconnect the device");
+            }
             return;
         }
         if(usbConnection == null) {
