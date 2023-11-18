@@ -31,9 +31,9 @@ public class SignalButtonsViewModel extends ViewModel {
     }
 
     public void onSendButtonClick(View view) {
-        String str = contract.getEditedText() + "\0";
+        String str = contract.getEditedText() + "\n";
         deviceConnector.send(str.getBytes());
-        contract.addText("send:" + str + "\n");
+        contract.addText("send:" + str);
     }
 
     public void setButtonText(String text) {
@@ -42,7 +42,7 @@ public class SignalButtonsViewModel extends ViewModel {
     }
 
     public void onSignalButtonClick(String text) {
-        contract.addText("send:" + text + "\n");
+        contract.addText("send:" + new String(signalHashMap.get(text)));
         deviceConnector.send(signalHashMap.get(text));
     }
 

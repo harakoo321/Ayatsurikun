@@ -29,7 +29,7 @@ import java.nio.ByteBuffer;
 public class UsbConnectorImpl implements DeviceConnector, SerialInputOutputManager.Listener {
     private enum UsbPermission { Unknown, Requested, Granted, Denied }
     private static final String INTENT_ACTION_GRANT_USB = "com.mmp.ayaturikun.GRANT_USB";
-    private static final int WRITE_WAIT_MILLIS = 2000;
+    private static final int WRITE_WAIT_MILLIS = 20;
     private UsbPermission usbPermission = UsbPermission.Unknown;
     private UsbSerialPort usbSerialPort;
     private SerialInputOutputManager usbIoManager;
@@ -76,7 +76,11 @@ public class UsbConnectorImpl implements DeviceConnector, SerialInputOutputManag
      */
     @Override
     public void setUp() {
-        ((Activity)contract).registerReceiver(broadcastReceiver, new IntentFilter(INTENT_ACTION_GRANT_USB), Context.RECEIVER_NOT_EXPORTED);
+        ((Activity)contract).registerReceiver(
+                broadcastReceiver,
+                new IntentFilter(INTENT_ACTION_GRANT_USB),
+                Context.RECEIVER_NOT_EXPORTED
+        );
 
         if(usbPermission == UsbPermission.Unknown || usbPermission == UsbPermission.Granted)
             mainLooper.post(this::connect);
@@ -107,12 +111,26 @@ public class UsbConnectorImpl implements DeviceConnector, SerialInputOutputManag
             return;
         }
         usbSerialPort = driver.getPorts().get(portNum);
-        UsbDeviceConnection usbConnection = usbManager.openDevice(driver.getDevice());
+        UsbDeviceConnection usbConnection = null;
+        try{
+            usbConnection = usbManager.openDevice(driver.getDevice());
+        } catch (SecurityException e) {
+            status("connection failed: permission denied");
+        }
         if(usbConnection == null && usbPermission == UsbPermission.Unknown && !usbManager.hasPermission(driver.getDevice())) {
             usbPermission = UsbPermission.Requested;
             int flags = PendingIntent.FLAG_MUTABLE;
-            PendingIntent usbPermissionIntent = PendingIntent.getBroadcast((Activity)contract, 0, new Intent(INTENT_ACTION_GRANT_USB), flags);
-            usbManager.requestPermission(driver.getDevice(), usbPermissionIntent);
+            try {
+                PendingIntent usbPermissionIntent = PendingIntent.getBroadcast(
+                        (Activity)contract,
+                        0,
+                        new Intent(INTENT_ACTION_GRANT_USB),
+                        flags
+                );
+                usbManager.requestPermission(driver.getDevice(), usbPermissionIntent);
+            } catch (IllegalArgumentException e) {
+                status("request permission failed: please reconnect the device");
+            }
             return;
         }
         if(usbConnection == null) {
@@ -184,8 +202,8 @@ public class UsbConnectorImpl implements DeviceConnector, SerialInputOutputManag
             byteBuffer.put(data);
             this.data = byteBuffer.array();
         }
-        if ((char) data[data.length - 1] == '\0') {
-            contract.addText("receive:" + new String(this.data) + "\n");
+        if ((char) data[data.length - 1] == '\n') {
+            contract.addText("receive:" + new String(this.data));
             signal.postValue(this.data);
             this.data = null;
         }
