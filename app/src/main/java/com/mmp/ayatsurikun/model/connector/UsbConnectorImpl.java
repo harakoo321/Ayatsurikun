@@ -20,6 +20,7 @@ import com.hoho.android.usbserial.driver.UsbSerialDriver;
 import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.hoho.android.usbserial.driver.UsbSerialProber;
 import com.hoho.android.usbserial.util.SerialInputOutputManager;
+import com.mmp.ayatsurikun.BuildConfig;
 import com.mmp.ayatsurikun.contract.SignalButtonsContract;
 import com.mmp.ayatsurikun.model.CustomProber;
 
@@ -28,7 +29,7 @@ import java.nio.ByteBuffer;
 
 public class UsbConnectorImpl implements DeviceConnector, SerialInputOutputManager.Listener {
     private enum UsbPermission { Unknown, Requested, Granted, Denied }
-    private static final String INTENT_ACTION_GRANT_USB = "com.mmp.ayaturikun.GRANT_USB";
+    private static final String INTENT_ACTION_GRANT_USB = BuildConfig.APPLICATION_ID + ".GRANT_USB";
     private static final int WRITE_WAIT_MILLIS = 20;
     private UsbPermission usbPermission = UsbPermission.Unknown;
     private UsbSerialPort usbSerialPort;
@@ -119,18 +120,14 @@ public class UsbConnectorImpl implements DeviceConnector, SerialInputOutputManag
         }
         if(usbConnection == null && usbPermission == UsbPermission.Unknown && !usbManager.hasPermission(driver.getDevice())) {
             usbPermission = UsbPermission.Requested;
-            int flags = PendingIntent.FLAG_MUTABLE;
-            try {
-                PendingIntent usbPermissionIntent = PendingIntent.getBroadcast(
-                        (Activity)contract,
-                        0,
-                        new Intent(INTENT_ACTION_GRANT_USB),
-                        flags
-                );
-                usbManager.requestPermission(driver.getDevice(), usbPermissionIntent);
-            } catch (IllegalArgumentException e) {
-                status("request permission failed: please reconnect the device");
-            }
+            int flags = PendingIntent.FLAG_IMMUTABLE;
+            PendingIntent usbPermissionIntent = PendingIntent.getBroadcast(
+                    (Context) contract,
+                    0,
+                    new Intent(INTENT_ACTION_GRANT_USB),
+                    flags
+            );
+            usbManager.requestPermission(driver.getDevice(), usbPermissionIntent);
             return;
         }
         if(usbConnection == null) {
