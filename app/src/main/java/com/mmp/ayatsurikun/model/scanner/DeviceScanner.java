@@ -6,7 +6,6 @@ import java.util.List;
 
 public interface DeviceScanner {
     List<DeviceItem> scanDevices(DeviceListViewContract deviceListView);
-    int getBaudRate();
 
     class DeviceItem {
         public final String driverName;
