@@ -14,8 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UsbDeviceScannerImpl implements DeviceScanner {
-    private int baudRate = 115200;
-
     @Override
     public List<DeviceItem> scanDevices(DeviceListViewContract deviceListView) {
         List<DeviceItem> deviceItems = new ArrayList<>();
@@ -46,10 +44,5 @@ public class UsbDeviceScannerImpl implements DeviceScanner {
             }
         }
         return deviceItems;
-    }
-
-    @Override
-    public int getBaudRate() {
-        return baudRate;
     }
 }
