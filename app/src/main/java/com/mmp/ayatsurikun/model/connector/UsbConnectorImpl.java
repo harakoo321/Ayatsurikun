@@ -30,7 +30,7 @@ import java.nio.ByteBuffer;
 public class UsbConnectorImpl implements DeviceConnector, SerialInputOutputManager.Listener {
     private enum UsbPermission { Unknown, Requested, Granted, Denied }
     private static final String INTENT_ACTION_GRANT_USB = BuildConfig.APPLICATION_ID + ".GRANT_USB";
-    private static final int WRITE_WAIT_MILLIS = 20;
+    private static final int WRITE_WAIT_MILLIS = 2000;
     private UsbPermission usbPermission = UsbPermission.Unknown;
     private UsbSerialPort usbSerialPort;
     private SerialInputOutputManager usbIoManager;
