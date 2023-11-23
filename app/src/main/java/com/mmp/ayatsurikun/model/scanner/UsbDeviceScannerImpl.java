@@ -8,14 +8,13 @@ import android.hardware.usb.UsbManager;
 import com.hoho.android.usbserial.driver.UsbSerialDriver;
 import com.hoho.android.usbserial.driver.UsbSerialProber;
 import com.mmp.ayatsurikun.contract.DeviceListViewContract;
+import com.mmp.ayatsurikun.model.ConnectionMethod;
 import com.mmp.ayatsurikun.model.CustomProber;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class UsbDeviceScannerImpl implements DeviceScanner {
-    private int baudRate = 115200;
-
     @Override
     public List<DeviceItem> scanDevices(DeviceListViewContract deviceListView) {
         List<DeviceItem> deviceItems = new ArrayList<>();
@@ -34,7 +33,9 @@ public class UsbDeviceScannerImpl implements DeviceScanner {
                             port,
                             device.getProductName(),
                             device.getDeviceName(),
-                            device.getDeviceId()));
+                            Integer.toString(device.getDeviceId()),
+                            ConnectionMethod.USB_SERIAL)
+                    );
                 }
             } else {
                 deviceItems.add(new DeviceItem(
@@ -42,14 +43,11 @@ public class UsbDeviceScannerImpl implements DeviceScanner {
                         0,
                         device.getProductName(),
                         device.getDeviceName(),
-                        device.getDeviceId()));
+                        Integer.toString(device.getDeviceId()),
+                        ConnectionMethod.USB_SERIAL)
+                );
             }
         }
         return deviceItems;
-    }
-
-    @Override
-    public int getBaudRate() {
-        return baudRate;
     }
 }

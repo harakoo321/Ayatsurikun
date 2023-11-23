@@ -16,16 +16,16 @@ import com.mmp.ayatsurikun.viewmodel.SignalButtonsViewModel;
 public class SignalButtonsActivity extends AppCompatActivity implements SignalButtonsContract {
     private static final String EXTRA_DEVICE_ID = "EXTRA_DEVICE_ID";
     private static final String EXTRA_PORT = "EXTRA_PORT";
-    private static final String EXTRA_BAUD_RATE = "EXTRA_BAUD_RATE";
+    private static final String EXTRA_CONNECTION_METHOD = "EXTRA_CONNECTION_METHOD";
     private SignalButtonsViewModel viewModel;
 
     private ActivitySignalButtonsBinding binding;
 
-    public static void start(Context context, int deviceId, int portNum, int baudRate) {
+    public static void start(Context context, String deviceId, int portNum, String connectionMethod) {
         final Intent intent = new Intent(context, SignalButtonsActivity.class);
         intent.putExtra(EXTRA_DEVICE_ID, deviceId);
         intent.putExtra(EXTRA_PORT, portNum);
-        intent.putExtra(EXTRA_BAUD_RATE, baudRate);
+        intent.putExtra(EXTRA_CONNECTION_METHOD, connectionMethod);
 
         context.startActivity(intent);
     }
@@ -37,9 +37,11 @@ public class SignalButtonsActivity extends AppCompatActivity implements SignalBu
         final Intent intent = getIntent();
         viewModel = new SignalButtonsViewModel(
                 this,
-                intent.getIntExtra(EXTRA_DEVICE_ID, 0),
+                intent.getStringExtra(EXTRA_DEVICE_ID),
                 intent.getIntExtra(EXTRA_PORT, 0),
-                intent.getIntExtra(EXTRA_BAUD_RATE, 0));
+                115200,
+                intent.getStringExtra(EXTRA_CONNECTION_METHOD) + ""
+        );
         binding.setViewModel(viewModel);
         binding.setLifecycleOwner(this);
         viewModel.getSignal().observe(this, bytes -> {

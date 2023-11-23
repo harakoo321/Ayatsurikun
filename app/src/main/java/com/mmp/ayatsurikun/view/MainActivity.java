@@ -1,17 +1,23 @@
 package com.mmp.ayatsurikun.view;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 
 import com.mmp.ayatsurikun.R;
 import com.mmp.ayatsurikun.contract.DeviceListViewContract;
 import com.mmp.ayatsurikun.databinding.ActivityMainBinding;
 import com.mmp.ayatsurikun.model.scanner.DeviceScanner;
-import com.mmp.ayatsurikun.model.scanner.UsbDeviceScannerImpl;
 import com.mmp.ayatsurikun.viewmodel.DeviceListViewModel;
 
 import java.util.List;
@@ -21,13 +27,18 @@ public class MainActivity extends AppCompatActivity implements DeviceListViewCon
     private DeviceAdapter deviceAdapter;
     private DeviceListViewModel deviceListViewModel;
 
+    private final ActivityResultLauncher<String> requestPermissionLauncher =
+            registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {});
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-        final DeviceScanner deviceScanner = new UsbDeviceScannerImpl();
-        deviceListViewModel = new DeviceListViewModel( this, deviceScanner);
+        deviceListViewModel = new DeviceListViewModel(this);
         binding.setViewModel(deviceListViewModel);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            checkPermission();
+        }
         setupViews();
     }
 
@@ -35,6 +46,13 @@ public class MainActivity extends AppCompatActivity implements DeviceListViewCon
     protected void onResume() {
         super.onResume();
         deviceListViewModel.loadDevices();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.S)
+    private void checkPermission() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissionLauncher.launch(Manifest.permission.BLUETOOTH_CONNECT);
+        }
     }
 
     private void setupViews() {
@@ -50,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements DeviceListViewCon
     }
 
     @Override
-    public void startSignalButtonsActivity(int deviceId, int port) {
-        SignalButtonsActivity.start(this, deviceId, port, deviceListViewModel.getBaudRate());
+    public void startSignalButtonsActivity(String deviceId, int port, String connectionMethod) {
+        SignalButtonsActivity.start(this, deviceId, port, connectionMethod);
     }
 }

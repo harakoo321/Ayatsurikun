@@ -1,7 +1,5 @@
 package com.mmp.ayatsurikun.viewmodel;
 
-import android.view.View;
-
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -13,7 +11,8 @@ public class DeviceItemViewModel extends ViewModel {
     public MutableLiveData<String> productName = new MutableLiveData<>();
     public MutableLiveData<String> deviceName = new MutableLiveData<>();
     private final DeviceListViewContract view;
-    private int deviceId, portNum;
+    private String deviceId, connectionMethod;
+    private int portNum;
 
     public DeviceItemViewModel(DeviceListViewContract view) {
         this.view = view;
@@ -25,9 +24,10 @@ public class DeviceItemViewModel extends ViewModel {
         productName.setValue("product:" + item.productName);
         deviceId = item.deviceId;
         portNum = item.port;
+        connectionMethod = item.connectionMethod;
     }
 
-    public void onItemClick(View itemView) {
-        view.startSignalButtonsActivity(deviceId, portNum);
+    public void onItemClick() {
+        view.startSignalButtonsActivity(deviceId, portNum, connectionMethod);
     }
 }

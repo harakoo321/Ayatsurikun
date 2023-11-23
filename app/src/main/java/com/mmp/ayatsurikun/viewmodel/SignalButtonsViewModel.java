@@ -1,11 +1,11 @@
 package com.mmp.ayatsurikun.viewmodel;
 
-import android.view.View;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.mmp.ayatsurikun.contract.SignalButtonsContract;
+import com.mmp.ayatsurikun.model.ConnectionMethod;
+import com.mmp.ayatsurikun.model.connector.BluetoothConnector;
 import com.mmp.ayatsurikun.model.connector.DeviceConnector;
 import com.mmp.ayatsurikun.model.connector.UsbConnectorImpl;
 
@@ -13,13 +13,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SignalButtonsViewModel extends ViewModel {
-    private Map<String, byte[]> signalHashMap = new HashMap<>();
+    private final Map<String, byte[]> signalHashMap = new HashMap<>();
     private final DeviceConnector deviceConnector;
     private final SignalButtonsContract contract;
     private byte[] signal;
-    public SignalButtonsViewModel(SignalButtonsContract contract, int deviceId, int portNum, int baudRate) {
+    public SignalButtonsViewModel(SignalButtonsContract contract, String deviceId, int portNum, int baudRate, String connectionMethod) {
         this.contract = contract;
-        deviceConnector = new UsbConnectorImpl(contract, deviceId, portNum, baudRate);
+        if (connectionMethod.equals(ConnectionMethod.USB_SERIAL)) {
+            deviceConnector = new UsbConnectorImpl(contract, deviceId, portNum, baudRate);
+        } else if (connectionMethod.equals(ConnectionMethod.BLUETOOTH_SPP)) {
+            deviceConnector = new BluetoothConnector(contract, deviceId);
+        } else {
+            deviceConnector = null;
+        }
     }
 
     public LiveData<byte[]> getSignal() {
@@ -30,7 +36,7 @@ public class SignalButtonsViewModel extends ViewModel {
         this.signal = signal;
     }
 
-    public void onSendButtonClick(View view) {
+    public void onSendButtonClick() {
         String str = contract.getEditedText() + "\n";
         deviceConnector.send(str.getBytes());
         contract.addText("send:" + str);
