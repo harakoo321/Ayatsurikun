@@ -58,7 +58,9 @@ public class BluetoothCommunicationThread extends Thread {
                 len = mmInStream.read(buffer);
                 if (len > 0) {
                     if (listener != null) {
-                        listener.onNewData(buffer);
+                        final byte[] data = new byte[len];
+                        System.arraycopy(buffer, 0, data, 0, len);
+                        listener.onNewData(data);
                     }
                 }
             } catch (IOException e) {

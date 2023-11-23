@@ -41,9 +41,9 @@ public class UsbConnectorImpl implements DeviceConnector, SerialInputOutputManag
     private boolean connected = false;
     private final MutableLiveData<byte[]> signal = new MutableLiveData<>();
     private byte[] data;
-    public UsbConnectorImpl(SignalButtonsContract contract, int deviceId, int portNum, int baudRate) {
+    public UsbConnectorImpl(SignalButtonsContract contract, String deviceId, int portNum, int baudRate) {
         this.contract = contract;
-        this.deviceId = deviceId;
+        this.deviceId = Integer.parseInt(deviceId);
         this.portNum = portNum;
         this.baudRate = baudRate;
         broadcastReceiver = new BroadcastReceiver() {

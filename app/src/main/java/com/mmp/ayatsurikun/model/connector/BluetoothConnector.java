@@ -3,9 +3,9 @@ package com.mmp.ayatsurikun.model.connector;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
@@ -18,20 +18,29 @@ import java.nio.ByteBuffer;
 public class BluetoothConnector implements DeviceConnector, BluetoothCommunicationThread.Listener {
     private final SignalButtonsContract contract;
     private final String macAddress;
-    private final Handler mainLooper;
+    private final Handler mainLooper = new Handler(Looper.getMainLooper());
     private BluetoothConnectThread connectThread;
     private BluetoothCommunicationThread communicationThread;
     private final MutableLiveData<byte[]> signal = new MutableLiveData<>();
-    private final BluetoothConnectThread.ConnectedCallback callback = socket -> {
-        communicationThread = new BluetoothCommunicationThread(socket, this);
-        connectThread.start();
-    };
     private byte[] data;
+    private final BluetoothCommunicationThread.Listener listener = this;
+    private final BluetoothConnectThread.ConnectedCallback callback = new BluetoothConnectThread.ConnectedCallback() {
+        @Override
+        public void connected(BluetoothSocket socket) {
+            communicationThread = new BluetoothCommunicationThread(socket, listener);
+            communicationThread.start();
+            mainLooper.post(() -> status("connected"));
+        }
+
+        @Override
+        public void connectionFailed() {
+            mainLooper.post(() -> status("connection failed"));
+        }
+    };
 
     public BluetoothConnector(SignalButtonsContract contract, String macAddress) {
         this.contract = contract;
         this.macAddress = macAddress;
-        mainLooper = new Handler(Looper.getMainLooper());
     }
 
     @Override
@@ -49,14 +58,14 @@ public class BluetoothConnector implements DeviceConnector, BluetoothCommunicati
 
     @Override
     public void setUp() {
-
+        mainLooper.post(this::connect);
     }
 
     @Override
     public void connect() {
         BluetoothDevice device = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(macAddress);
         if (device == null) {
-            Log.e("Connection", "Device not found.");
+            status("device not found.");
             return;
         }
         connectThread = new BluetoothConnectThread(device, callback);

@@ -11,17 +11,16 @@ public class BluetoothConnectThread extends Thread {
     private static final String TAG = BluetoothConnectThread.class.getSimpleName();
     private static final UUID BLUETOOTH_SPP = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private final BluetoothSocket mmSocket;
-    private final BluetoothDevice mmDevice;
     private final ConnectedCallback connectedCallback;
     public interface ConnectedCallback {
         void connected(BluetoothSocket socket);
+        void connectionFailed();
     }
 
     public BluetoothConnectThread(BluetoothDevice device, ConnectedCallback connectedCallback) {
         // Use a temporary object that is later assigned to mmSocket
         // because mmSocket is final.
         BluetoothSocket tmp = null;
-        mmDevice = device;
         this.connectedCallback = connectedCallback;
 
         try {
@@ -46,6 +45,7 @@ public class BluetoothConnectThread extends Thread {
             } catch (IOException closeException) {
                 Log.e(TAG, "Could not close the client socket", closeException);
             }
+            connectedCallback.connectionFailed();
             return;
         }
 

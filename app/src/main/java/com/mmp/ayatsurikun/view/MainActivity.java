@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements DeviceListViewCon
     }
 
     @Override
-    public void startSignalButtonsActivity(int deviceId, int port) {
-        SignalButtonsActivity.start(this, deviceId, port);
+    public void startSignalButtonsActivity(String deviceId, int port, String connectionMethod) {
+        SignalButtonsActivity.start(this, deviceId, port, connectionMethod);
     }
 }
