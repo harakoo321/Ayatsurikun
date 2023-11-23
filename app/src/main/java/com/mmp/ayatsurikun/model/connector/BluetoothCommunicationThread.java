@@ -12,7 +12,7 @@ public class BluetoothCommunicationThread extends Thread {
     private final BluetoothSocket mmSocket;
     private final InputStream mmInStream;
     private final OutputStream mmOutStream;
-    private final Listener listener;
+    private Listener listener;
 
     public interface Listener {
         void onNewData(byte[] data);
@@ -40,6 +40,10 @@ public class BluetoothCommunicationThread extends Thread {
 
         mmInStream = tmpIn;
         mmOutStream = tmpOut;
+    }
+
+    public void setListener(Listener listener){
+        this.listener = listener;
     }
 
     public void run() {

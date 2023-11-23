@@ -54,6 +54,10 @@ public class BluetoothConnectThread extends Thread {
         connectedCallback.connected(mmSocket);
     }
 
+    public boolean isConnected() {
+        return mmSocket != null && mmSocket.isConnected();
+    }
+
     // Closes the client socket and causes the thread to finish.
     public void cancel() {
         try {

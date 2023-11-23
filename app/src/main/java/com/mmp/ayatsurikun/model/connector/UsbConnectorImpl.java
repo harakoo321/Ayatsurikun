@@ -206,7 +206,7 @@ public class UsbConnectorImpl implements DeviceConnector, SerialInputOutputManag
         }
     }
 
-    void status(String str) {
+    private void status(String str) {
         contract.addText(str + "\n");
     }
 }
