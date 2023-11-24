@@ -47,6 +47,11 @@ public class SignalButtonsViewModel extends ViewModel {
 
     public void setUp() {
         deviceConnector.setUp();
+        if (!signalHashMap.isEmpty()) {
+            for (String text : signalHashMap.keySet()) {
+                contract.addButton(text);
+            }
+        }
     }
 
     public void disconnect() {
