@@ -11,7 +11,6 @@ import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
 import android.os.Handler;
 import android.os.Looper;
-import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -85,7 +84,7 @@ public class UsbConnectorImpl implements DeviceConnector, SerialInputOutputManag
 
         if(usbPermission == UsbPermission.Unknown || usbPermission == UsbPermission.Granted)
             mainLooper.post(this::connect);
-        Toast.makeText((Activity)contract, "Setup Completed!", Toast.LENGTH_SHORT).show();
+        status("Setup Completed!");
     }
 
     @Override
@@ -175,7 +174,7 @@ public class UsbConnectorImpl implements DeviceConnector, SerialInputOutputManag
     @Override
     public void send(byte[] signal) {
         if(!connected) {
-            Toast.makeText((Activity)contract, "not connected", Toast.LENGTH_SHORT).show();
+            status("not connected");
             return;
         }
         try {
@@ -200,13 +199,12 @@ public class UsbConnectorImpl implements DeviceConnector, SerialInputOutputManag
             this.data = byteBuffer.array();
         }
         if ((char) data[data.length - 1] == '\n') {
-            contract.addText("receive:" + new String(this.data));
             signal.postValue(this.data);
             this.data = null;
         }
     }
 
     private void status(String str) {
-        contract.addText(str + "\n");
+        contract.showToast(str);
     }
 }

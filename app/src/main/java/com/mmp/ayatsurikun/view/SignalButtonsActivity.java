@@ -1,12 +1,13 @@
 package com.mmp.ayatsurikun.view;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
 
 import com.mmp.ayatsurikun.R;
 import com.mmp.ayatsurikun.contract.SignalButtonsContract;
@@ -63,18 +64,9 @@ public class SignalButtonsActivity extends AppCompatActivity implements SignalBu
     }
 
     @Override
-    public String getEditedText() {
-        return binding.sendText.getText().toString();
-    }
-
-    @Override
     public void startAddButtonDialog() {
         AddButtonDialogFragment dialogFragment = new AddButtonDialogFragment(viewModel);
         dialogFragment.show(getSupportFragmentManager(), "AddButtonDialogFragment");
-    }
-    @Override
-    public void addText(String str) {
-        binding.receiveText.append(str);
     }
 
     @Override
@@ -83,5 +75,10 @@ public class SignalButtonsActivity extends AppCompatActivity implements SignalBu
         button.setText(text);
         button.setOnClickListener(v -> viewModel.onSignalButtonClick(((Button)v).getText().toString()));
         binding.linearLayout.addView(button);
+    }
+
+    @Override
+    public void showToast(String text) {
+        Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
     }
 }

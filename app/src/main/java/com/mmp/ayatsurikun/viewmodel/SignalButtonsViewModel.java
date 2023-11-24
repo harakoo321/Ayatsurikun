@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.mmp.ayatsurikun.contract.SignalButtonsContract;
 import com.mmp.ayatsurikun.model.ConnectionMethod;
-import com.mmp.ayatsurikun.model.connector.BluetoothConnector;
+import com.mmp.ayatsurikun.model.connector.BluetoothConnectorImpl;
 import com.mmp.ayatsurikun.model.connector.DeviceConnector;
 import com.mmp.ayatsurikun.model.connector.UsbConnectorImpl;
 
@@ -22,7 +22,7 @@ public class SignalButtonsViewModel extends ViewModel {
         if (connectionMethod.equals(ConnectionMethod.USB_SERIAL)) {
             deviceConnector = new UsbConnectorImpl(contract, deviceId, portNum, baudRate);
         } else if (connectionMethod.equals(ConnectionMethod.BLUETOOTH_SPP)) {
-            deviceConnector = new BluetoothConnector(contract, deviceId);
+            deviceConnector = new BluetoothConnectorImpl(contract, deviceId);
         } else {
             deviceConnector = null;
         }
@@ -36,19 +36,12 @@ public class SignalButtonsViewModel extends ViewModel {
         this.signal = signal;
     }
 
-    public void onSendButtonClick() {
-        String str = contract.getEditedText() + "\n";
-        deviceConnector.send(str.getBytes());
-        contract.addText("send:" + str);
-    }
-
     public void setButtonText(String text) {
         contract.addButton(text);
         signalHashMap.put(text, signal);
     }
 
     public void onSignalButtonClick(String text) {
-        contract.addText("send:" + new String(signalHashMap.get(text)));
         deviceConnector.send(signalHashMap.get(text));
     }
 
