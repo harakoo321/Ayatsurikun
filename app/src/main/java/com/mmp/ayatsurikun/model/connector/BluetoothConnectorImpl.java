@@ -1,12 +1,10 @@
 package com.mmp.ayatsurikun.model.connector;
 
-import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
 import android.os.Looper;
-import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -15,7 +13,7 @@ import com.mmp.ayatsurikun.contract.SignalButtonsContract;
 
 import java.nio.ByteBuffer;
 
-public class BluetoothConnector implements DeviceConnector, BluetoothCommunicationThread.Listener {
+public class BluetoothConnectorImpl implements DeviceConnector, BluetoothCommunicationThread.Listener {
     private final SignalButtonsContract contract;
     private final String macAddress;
     private final Handler mainLooper = new Handler(Looper.getMainLooper());
@@ -38,7 +36,7 @@ public class BluetoothConnector implements DeviceConnector, BluetoothCommunicati
         }
     };
 
-    public BluetoothConnector(SignalButtonsContract contract, String macAddress) {
+    public BluetoothConnectorImpl(SignalButtonsContract contract, String macAddress) {
         this.contract = contract;
         this.macAddress = macAddress;
     }
@@ -88,7 +86,7 @@ public class BluetoothConnector implements DeviceConnector, BluetoothCommunicati
     @Override
     public void send(byte[] signal) {
         if(!connectThread.isConnected()) {
-            Toast.makeText((Activity)contract, "not connected", Toast.LENGTH_SHORT).show();
+            status("not connected");
             return;
         }
         try {
@@ -107,7 +105,7 @@ public class BluetoothConnector implements DeviceConnector, BluetoothCommunicati
             this.data = byteBuffer.array();
         }
         if ((char) data[data.length - 1] == '\n') {
-            contract.addText("receive:" + new String(this.data));
+            status("receive:" + new String(this.data));
             signal.postValue(this.data);
             this.data = null;
         }
@@ -119,6 +117,6 @@ public class BluetoothConnector implements DeviceConnector, BluetoothCommunicati
     }
 
     private void status(String str) {
-        contract.addText(str + "\n");
+        contract.showToast(str);
     }
 }

@@ -25,43 +25,7 @@
                     android:layout_width="match_parent"
                     android:background="?android:attr/listDivider"
                     android:layout_height="2dp" />
-
-                <TextView
-                    android:id="@+id/receive_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:freezesText="true"
-                    android:gravity="bottom"
-                    android:scrollbars="vertical"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                    android:typeface="monospace" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:background="?android:attr/listDivider"
-                    android:layout_height="2dp" />
             </LinearLayout>
         </ScrollView>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_weight="1">
-
-            <EditText
-                android:id="@+id/send_text"
-                android:layout_width="320dp"
-                android:layout_height="match_parent"
-                android:inputType="text|textNoSuggestions"
-                android:singleLine="true" />
-
-            <Button
-                android:id="@+id/send_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="@{() -> viewModel.onSendButtonClick()}"
-                android:text="@string/btn_send" />
-        </LinearLayout>
     </LinearLayout>
 </layout>
