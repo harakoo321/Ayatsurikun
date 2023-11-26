@@ -35,13 +35,12 @@ public class UsbConnectorImpl implements DeviceConnector, SerialInputOutputManag
     private SerialInputOutputManager usbIoManager;
     private final BroadcastReceiver broadcastReceiver;
     private final Handler mainLooper;
-    private final SignalButtonsContract contract;
+    private SignalButtonsContract contract;
     private final int deviceId, portNum, baudRate;
     private boolean connected = false;
     private final MutableLiveData<byte[]> signal = new MutableLiveData<>();
     private byte[] data;
-    public UsbConnectorImpl(SignalButtonsContract contract, String deviceId, int portNum, int baudRate) {
-        this.contract = contract;
+    public UsbConnectorImpl(String deviceId, int portNum, int baudRate) {
         this.deviceId = Integer.parseInt(deviceId);
         this.portNum = portNum;
         this.baudRate = baudRate;
@@ -75,7 +74,8 @@ public class UsbConnectorImpl implements DeviceConnector, SerialInputOutputManag
      * Serial + UI
      */
     @Override
-    public void setUp() {
+    public void setUp(SignalButtonsContract contract) {
+        this.contract = contract;
         ((Activity)contract).registerReceiver(
                 broadcastReceiver,
                 new IntentFilter(INTENT_ACTION_GRANT_USB),
@@ -168,6 +168,7 @@ public class UsbConnectorImpl implements DeviceConnector, SerialInputOutputManag
                 usbSerialPort.close();
             } catch (IOException ignored) {}
             usbSerialPort = null;
+            status("disconnected");
         }
     }
 
@@ -199,6 +200,7 @@ public class UsbConnectorImpl implements DeviceConnector, SerialInputOutputManag
             this.data = byteBuffer.array();
         }
         if ((char) data[data.length - 1] == '\n') {
+            status("received");
             signal.postValue(this.data);
             this.data = null;
         }

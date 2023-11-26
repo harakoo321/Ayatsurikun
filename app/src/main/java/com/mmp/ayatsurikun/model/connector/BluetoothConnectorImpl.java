@@ -14,7 +14,7 @@ import com.mmp.ayatsurikun.contract.SignalButtonsContract;
 import java.nio.ByteBuffer;
 
 public class BluetoothConnectorImpl implements DeviceConnector, BluetoothCommunicationThread.Listener {
-    private final SignalButtonsContract contract;
+    private SignalButtonsContract contract;
     private final String macAddress;
     private final Handler mainLooper = new Handler(Looper.getMainLooper());
     private BluetoothConnectThread connectThread;
@@ -36,8 +36,7 @@ public class BluetoothConnectorImpl implements DeviceConnector, BluetoothCommuni
         }
     };
 
-    public BluetoothConnectorImpl(SignalButtonsContract contract, String macAddress) {
-        this.contract = contract;
+    public BluetoothConnectorImpl(String macAddress) {
         this.macAddress = macAddress;
     }
 
@@ -55,7 +54,8 @@ public class BluetoothConnectorImpl implements DeviceConnector, BluetoothCommuni
     }
 
     @Override
-    public void setUp() {
+    public void setUp(SignalButtonsContract contract) {
+        this.contract = contract;
         mainLooper.post(this::connect);
     }
 
@@ -72,6 +72,7 @@ public class BluetoothConnectorImpl implements DeviceConnector, BluetoothCommuni
 
     @Override
     public void disconnect() {
+        if (connectThread == null) return;
         if(connectThread.isConnected()) {
             if(communicationThread != null) {
                 communicationThread.setListener(null);
@@ -80,11 +81,16 @@ public class BluetoothConnectorImpl implements DeviceConnector, BluetoothCommuni
             communicationThread = null;
             if (connectThread.isConnected())connectThread.cancel();
             connectThread = null;
+            status("disconnected");
         }
     }
 
     @Override
     public void send(byte[] signal) {
+        if(connectThread == null) {
+            status("not connected");
+            return;
+        }
         if(!connectThread.isConnected()) {
             status("not connected");
             return;
@@ -105,7 +111,7 @@ public class BluetoothConnectorImpl implements DeviceConnector, BluetoothCommuni
             this.data = byteBuffer.array();
         }
         if ((char) data[data.length - 1] == '\n') {
-            status("receive:" + new String(this.data));
+            status("received");
             signal.postValue(this.data);
             this.data = null;
         }

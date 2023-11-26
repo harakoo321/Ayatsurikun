@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.mmp.ayatsurikun.R;
 import com.mmp.ayatsurikun.contract.SignalButtonsContract;
@@ -19,6 +20,7 @@ public class SignalButtonsActivity extends AppCompatActivity implements SignalBu
     private static final String EXTRA_PORT = "EXTRA_PORT";
     private static final String EXTRA_CONNECTION_METHOD = "EXTRA_CONNECTION_METHOD";
     private SignalButtonsViewModel viewModel;
+    private AddButtonDialogFragment dialogFragment;
 
     private ActivitySignalButtonsBinding binding;
 
@@ -36,13 +38,14 @@ public class SignalButtonsActivity extends AppCompatActivity implements SignalBu
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_signal_buttons);
         final Intent intent = getIntent();
-        viewModel = new SignalButtonsViewModel(
-                this,
+        SignalButtonsViewModel.Factory factory = new SignalButtonsViewModel.Factory(
                 intent.getStringExtra(EXTRA_DEVICE_ID),
                 intent.getIntExtra(EXTRA_PORT, 0),
                 115200,
                 intent.getStringExtra(EXTRA_CONNECTION_METHOD) + ""
         );
+        viewModel = new ViewModelProvider(this, factory).get(SignalButtonsViewModel.class);
+        dialogFragment = new AddButtonDialogFragment(viewModel);
         binding.setViewModel(viewModel);
         binding.setLifecycleOwner(this);
         viewModel.getSignal().observe(this, bytes -> {
@@ -54,18 +57,24 @@ public class SignalButtonsActivity extends AppCompatActivity implements SignalBu
     @Override
     public void onResume() {
         super.onResume();
-        viewModel.setUp();
+        viewModel.setUp(this);
     }
 
     @Override
     public void onPause() {
-        viewModel.disconnect();
+        dialogFragment.dismiss();
         super.onPause();
     }
 
     @Override
+    public void onDestroy() {
+        viewModel.disconnect();
+        super.onDestroy();
+    }
+
+    @Override
     public void startAddButtonDialog() {
-        AddButtonDialogFragment dialogFragment = new AddButtonDialogFragment(viewModel);
+        if(dialogFragment.isAdded()) dialogFragment.dismiss();
         dialogFragment.show(getSupportFragmentManager(), "AddButtonDialogFragment");
     }
 
