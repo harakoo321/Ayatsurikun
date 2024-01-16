@@ -17,12 +17,14 @@ import android.os.Bundle;
 import com.mmp.ayatsurikun.R;
 import com.mmp.ayatsurikun.contract.DeviceListViewContract;
 import com.mmp.ayatsurikun.databinding.ActivityMainBinding;
-import com.mmp.ayatsurikun.model.scanner.DeviceScanner;
+import com.mmp.ayatsurikun.model.ConnectionMethod;
+import com.mmp.ayatsurikun.model.Device;
 import com.mmp.ayatsurikun.viewmodel.DeviceListViewModel;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements DeviceListViewContract {
+//@AndroidEntryPoint
+public class SelectDeviceActivity extends AppCompatActivity implements DeviceListViewContract {
 
     private DeviceAdapter deviceAdapter;
     private DeviceListViewModel deviceListViewModel;
@@ -63,12 +65,12 @@ public class MainActivity extends AppCompatActivity implements DeviceListViewCon
     }
 
     @Override
-    public void showDevices(List<DeviceScanner.DeviceItem> deviceItems) {
-        deviceAdapter.setItemsAndRefresh(deviceItems);
+    public void showDevices(List<Device> devices) {
+        deviceAdapter.setItemsAndRefresh(devices);
     }
 
     @Override
-    public void startSignalButtonsActivity(String deviceId, int port, String connectionMethod) {
+    public void startSignalButtonsActivity(String deviceId, int port, ConnectionMethod connectionMethod) {
         SignalButtonsActivity.start(this, deviceId, port, connectionMethod);
     }
 }

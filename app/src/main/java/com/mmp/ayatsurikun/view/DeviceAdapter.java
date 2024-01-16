@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import com.mmp.ayatsurikun.R;
 import com.mmp.ayatsurikun.contract.DeviceListViewContract;
 import com.mmp.ayatsurikun.databinding.DeviceItemBinding;
-import com.mmp.ayatsurikun.model.scanner.DeviceScanner;
+import com.mmp.ayatsurikun.model.Device;
 import com.mmp.ayatsurikun.viewmodel.DeviceItemViewModel;
 
 import java.util.List;
@@ -21,19 +21,19 @@ import java.util.List;
 public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceViewHolder> {
     private final DeviceListViewContract view;
     private final Context context;
-    private List<DeviceScanner.DeviceItem> items;
+    private List<Device> items;
 
     public DeviceAdapter(Context context, DeviceListViewContract view) {
         this.view = view;
         this.context = context;
     }
 
-    public void setItemsAndRefresh(List<DeviceScanner.DeviceItem> items) {
+    public void setItemsAndRefresh(List<Device> items) {
         this.items = items;
         notifyDataSetChanged();
     }
 
-    public DeviceScanner.DeviceItem getItemAt(int position) {
+    public Device getItemAt(int position) {
         return items.get(position);
     }
 
@@ -48,7 +48,7 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceView
 
     @Override
     public void onBindViewHolder(final DeviceViewHolder holder, final int position) {
-        final DeviceScanner.DeviceItem item = getItemAt(position);
+        final Device item = getItemAt(position);
         holder.loadItem(item);
     }
 
@@ -68,7 +68,7 @@ public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceView
             this.viewModel = viewModel;
         }
 
-        public void loadItem(DeviceScanner.DeviceItem item) {
+        public void loadItem(Device item) {
             viewModel.loadItem(item);
         }
     }

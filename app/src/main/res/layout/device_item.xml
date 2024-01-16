@@ -33,7 +33,7 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginTop="8dp"
-                android:text="@{viewModel.deviceName}"
+                android:text="@{viewModel.name}"
                 android:textAppearance="@android:style/TextAppearance.Large"
                 tools:text="title" />
 
@@ -46,7 +46,7 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginTop="4dp"
-                android:text="@{viewModel.productName}"
+                android:text="@{viewModel.id}"
                 android:textAppearance="@android:style/TextAppearance"
                 tools:text="contents" />
 
@@ -59,7 +59,7 @@
                 android:layout_marginTop="4dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginBottom="4dp"
-                android:text="@{viewModel.driverName}"
+                android:text="@{viewModel.connection}"
                 android:textAppearance="@android:style/TextAppearance"
                 tools:text="contents" />
 

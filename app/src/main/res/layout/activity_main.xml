@@ -13,7 +13,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".view.MainActivity">
+        tools:context=".view.SelectDeviceActivity">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_dev"
@@ -23,7 +23,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             app:layoutManager="LinearLayoutManager"
-            tools:context=".view.MainActivity"
+            tools:context=".view.SelectDeviceActivity"
             tools:listitem="@layout/device_item" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
