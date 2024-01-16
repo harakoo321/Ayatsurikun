@@ -1,6 +1,5 @@
 package com.mmp.ayatsurikun.model.connector;
 
-import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -19,6 +18,7 @@ import com.hoho.android.usbserial.driver.UsbSerialDriver;
 import com.hoho.android.usbserial.driver.UsbSerialPort;
 import com.hoho.android.usbserial.driver.UsbSerialProber;
 import com.hoho.android.usbserial.util.SerialInputOutputManager;
+import com.mmp.ayatsurikun.App;
 import com.mmp.ayatsurikun.BuildConfig;
 import com.mmp.ayatsurikun.contract.SignalButtonsContract;
 import com.mmp.ayatsurikun.model.CustomProber;
@@ -76,7 +76,7 @@ public class UsbConnectorImpl implements DeviceConnector, SerialInputOutputManag
     @Override
     public void setUp(SignalButtonsContract contract) {
         this.contract = contract;
-        ((Activity)contract).registerReceiver(
+        App.ContextProvider.getApplicationContext().registerReceiver(
                 broadcastReceiver,
                 new IntentFilter(INTENT_ACTION_GRANT_USB),
                 Context.RECEIVER_NOT_EXPORTED
@@ -90,7 +90,8 @@ public class UsbConnectorImpl implements DeviceConnector, SerialInputOutputManag
     @Override
     public void connect() {
         UsbDevice device = null;
-        UsbManager usbManager = (UsbManager) ((Activity)contract).getSystemService(Context.USB_SERVICE);
+        UsbManager usbManager =
+                (UsbManager) App.ContextProvider.getApplicationContext().getSystemService(Context.USB_SERVICE);
         for(UsbDevice v : usbManager.getDeviceList().values())
             if(v.getDeviceId() == deviceId)
                 device = v;
@@ -121,7 +122,7 @@ public class UsbConnectorImpl implements DeviceConnector, SerialInputOutputManag
             usbPermission = UsbPermission.Requested;
             int flags = PendingIntent.FLAG_IMMUTABLE;
             PendingIntent usbPermissionIntent = PendingIntent.getBroadcast(
-                    (Context) contract,
+                    App.ContextProvider.getApplicationContext(),
                     0,
                     new Intent(INTENT_ACTION_GRANT_USB),
                     flags
@@ -158,7 +159,7 @@ public class UsbConnectorImpl implements DeviceConnector, SerialInputOutputManag
     public void disconnect() {
         if(connected) {
             connected = false;
-            ((Activity)contract).unregisterReceiver(broadcastReceiver);
+            App.ContextProvider.getApplicationContext().unregisterReceiver(broadcastReceiver);
             if(usbIoManager != null) {
                 usbIoManager.setListener(null);
                 usbIoManager.stop();
