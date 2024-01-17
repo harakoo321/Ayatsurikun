@@ -19,7 +19,7 @@
             android:name=".view.SignalButtonsActivity"
             android:exported="false" />
         <activity
-            android:name=".view.SelectDeviceActivity"
+            android:name=".view.DeviceListActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
