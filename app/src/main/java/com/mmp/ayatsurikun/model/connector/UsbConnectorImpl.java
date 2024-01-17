@@ -36,12 +36,13 @@ public class UsbConnectorImpl implements DeviceConnector, SerialInputOutputManag
     private final BroadcastReceiver broadcastReceiver;
     private final Handler mainLooper;
     private SignalButtonsContract contract;
-    private final int deviceId, portNum, baudRate;
+    private final int portNum, baudRate;
+    private final String deviceName;
     private boolean connected = false;
     private final MutableLiveData<byte[]> signal = new MutableLiveData<>();
     private byte[] data;
-    public UsbConnectorImpl(String deviceId, int portNum, int baudRate) {
-        this.deviceId = Integer.parseInt(deviceId);
+    public UsbConnectorImpl(String deviceName, int portNum, int baudRate) {
+        this.deviceName = deviceName;
         this.portNum = portNum;
         this.baudRate = baudRate;
         broadcastReceiver = new BroadcastReceiver() {
@@ -76,7 +77,7 @@ public class UsbConnectorImpl implements DeviceConnector, SerialInputOutputManag
     @Override
     public void setUp(SignalButtonsContract contract) {
         this.contract = contract;
-        App.ContextProvider.getApplicationContext().registerReceiver(
+        App.ContextProvider.getContext().registerReceiver(
                 broadcastReceiver,
                 new IntentFilter(INTENT_ACTION_GRANT_USB),
                 Context.RECEIVER_NOT_EXPORTED
@@ -91,9 +92,9 @@ public class UsbConnectorImpl implements DeviceConnector, SerialInputOutputManag
     public void connect() {
         UsbDevice device = null;
         UsbManager usbManager =
-                (UsbManager) App.ContextProvider.getApplicationContext().getSystemService(Context.USB_SERVICE);
+                (UsbManager) App.ContextProvider.getContext().getSystemService(Context.USB_SERVICE);
         for(UsbDevice v : usbManager.getDeviceList().values())
-            if(v.getDeviceId() == deviceId)
+            if(v.getDeviceName().equals(deviceName))
                 device = v;
         if(device == null) {
             status("connection failed: device not found");
@@ -122,7 +123,7 @@ public class UsbConnectorImpl implements DeviceConnector, SerialInputOutputManag
             usbPermission = UsbPermission.Requested;
             int flags = PendingIntent.FLAG_IMMUTABLE;
             PendingIntent usbPermissionIntent = PendingIntent.getBroadcast(
-                    App.ContextProvider.getApplicationContext(),
+                    App.ContextProvider.getContext(),
                     0,
                     new Intent(INTENT_ACTION_GRANT_USB),
                     flags
@@ -159,7 +160,7 @@ public class UsbConnectorImpl implements DeviceConnector, SerialInputOutputManag
     public void disconnect() {
         if(connected) {
             connected = false;
-            App.ContextProvider.getApplicationContext().unregisterReceiver(broadcastReceiver);
+            App.ContextProvider.getContext().unregisterReceiver(broadcastReceiver);
             if(usbIoManager != null) {
                 usbIoManager.setListener(null);
                 usbIoManager.stop();

@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.mmp.ayatsurikun.contract.SignalButtonsContract;
-import com.mmp.ayatsurikun.model.ConnectionMethod;
+import com.mmp.ayatsurikun.model.ConnectionType;
 import com.mmp.ayatsurikun.model.connector.BluetoothConnectorImpl;
 import com.mmp.ayatsurikun.model.connector.DeviceConnector;
 import com.mmp.ayatsurikun.model.connector.UsbConnectorImpl;
@@ -21,10 +21,10 @@ public class SignalButtonsViewModel extends ViewModel {
     private final DeviceConnector deviceConnector;
     private SignalButtonsContract contract;
     private byte[] signal;
-    public SignalButtonsViewModel(String deviceId, int portNum, int baudRate, String connectionMethod) {
-        if (connectionMethod.equals(ConnectionMethod.USB_SERIAL)) {
+    public SignalButtonsViewModel(String deviceId, int portNum, int baudRate, ConnectionType connectionType) {
+        if (connectionType == ConnectionType.USB_SERIAL) {
             deviceConnector = new UsbConnectorImpl(deviceId, portNum, baudRate);
-        } else if (connectionMethod.equals(ConnectionMethod.BLUETOOTH_SPP)) {
+        } else if (connectionType == ConnectionType.BLUETOOTH_SPP) {
             deviceConnector = new BluetoothConnectorImpl(deviceId);
         } else {
             deviceConnector = null;
@@ -68,19 +68,19 @@ public class SignalButtonsViewModel extends ViewModel {
     public static class Factory extends ViewModelProvider.NewInstanceFactory {
         private final String deviceId;
         private final int portNum, baudRate;
-        private final String connectionMethod;
-        public Factory(String deviceId, int portNum, int baudRate, String connectionMethod) {
+        private final ConnectionType connectionType;
+        public Factory(String deviceId, int portNum, int baudRate, ConnectionType connectionType) {
             this.deviceId = deviceId;
             this.portNum = portNum;
             this.baudRate = baudRate;
-            this.connectionMethod = connectionMethod;
+            this.connectionType = connectionType;
         }
 
         @SuppressWarnings("unchecked cast")
         @NonNull
         @Override
         public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-            return (T) new SignalButtonsViewModel(deviceId, portNum, baudRate, connectionMethod);
+            return (T) new SignalButtonsViewModel(deviceId, portNum, baudRate, connectionType);
         }
     }
 }

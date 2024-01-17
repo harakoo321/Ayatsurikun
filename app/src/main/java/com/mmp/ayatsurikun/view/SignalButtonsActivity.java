@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.mmp.ayatsurikun.R;
 import com.mmp.ayatsurikun.contract.SignalButtonsContract;
 import com.mmp.ayatsurikun.databinding.ActivitySignalButtonsBinding;
+import com.mmp.ayatsurikun.model.ConnectionType;
 import com.mmp.ayatsurikun.viewmodel.SignalButtonsViewModel;
 
 public class SignalButtonsActivity extends AppCompatActivity implements SignalButtonsContract {
@@ -24,11 +25,11 @@ public class SignalButtonsActivity extends AppCompatActivity implements SignalBu
 
     private ActivitySignalButtonsBinding binding;
 
-    public static void start(Context context, String deviceId, int portNum, String connectionMethod) {
+    public static void start(Context context, String deviceId, int portNum, ConnectionType connectionType) {
         final Intent intent = new Intent(context, SignalButtonsActivity.class);
         intent.putExtra(EXTRA_DEVICE_ID, deviceId);
         intent.putExtra(EXTRA_PORT, portNum);
-        intent.putExtra(EXTRA_CONNECTION_METHOD, connectionMethod);
+        intent.putExtra(EXTRA_CONNECTION_METHOD, connectionType);
 
         context.startActivity(intent);
     }
@@ -42,7 +43,7 @@ public class SignalButtonsActivity extends AppCompatActivity implements SignalBu
                 intent.getStringExtra(EXTRA_DEVICE_ID),
                 intent.getIntExtra(EXTRA_PORT, 0),
                 115200,
-                intent.getStringExtra(EXTRA_CONNECTION_METHOD) + ""
+                (ConnectionType)intent.getSerializableExtra(EXTRA_CONNECTION_METHOD)
         );
         viewModel = new ViewModelProvider(this, factory).get(SignalButtonsViewModel.class);
         dialogFragment = new AddButtonDialogFragment(viewModel);
@@ -62,7 +63,9 @@ public class SignalButtonsActivity extends AppCompatActivity implements SignalBu
 
     @Override
     public void onPause() {
-        dialogFragment.dismiss();
+        if(dialogFragment.isAdded()) {
+            dialogFragment.dismiss();
+        }
         super.onPause();
     }
 

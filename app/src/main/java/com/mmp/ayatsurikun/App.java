@@ -3,11 +3,12 @@ package com.mmp.ayatsurikun;
 import android.app.Application;
 import android.content.Context;
 
+//@HiltAndroidApp
 public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        ContextProvider.setApplicationContext(this);
+        ContextProvider.setApplicationContext(getApplicationContext());
     }
 
     public static class ContextProvider {
@@ -17,7 +18,7 @@ public class App extends Application {
             applicationContext = context;
         }
 
-        public static Context getApplicationContext() {
+        public static Context getContext() {
             return applicationContext;
         }
     }

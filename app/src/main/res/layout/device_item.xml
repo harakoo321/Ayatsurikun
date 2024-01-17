@@ -6,8 +6,12 @@
 
     <data>
         <variable
+            name="device"
+            type="com.mmp.ayatsurikun.model.Device" />
+
+        <variable
             name="viewModel"
-            type="com.mmp.ayatsurikun.viewmodel.DeviceItemViewModel" />
+            type="com.mmp.ayatsurikun.viewmodel.DeviceListViewModel" />
     </data>
 
     <androidx.cardview.widget.CardView
@@ -15,7 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:clickable="true"
-        android:onClick="@{() -> viewModel.onItemClick()}"
+        android:onClick="@{() -> viewModel.onItemClick(device)}"
         android:orientation="vertical"
         android:focusable="true"
         app:cardUseCompatPadding="true">
@@ -33,7 +37,7 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginTop="8dp"
-                android:text="@{viewModel.deviceName}"
+                android:text="@{device.getName()}"
                 android:textAppearance="@android:style/TextAppearance.Large"
                 tools:text="title" />
 
@@ -46,7 +50,7 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginTop="4dp"
-                android:text="@{viewModel.productName}"
+                android:text="@{device.getId()}"
                 android:textAppearance="@android:style/TextAppearance"
                 tools:text="contents" />
 
@@ -59,7 +63,7 @@
                 android:layout_marginTop="4dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginBottom="4dp"
-                android:text="@{viewModel.driverName}"
+                android:text="@{device.getConnectionType().toString()}"
                 android:textAppearance="@android:style/TextAppearance"
                 tools:text="contents" />
 

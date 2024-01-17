@@ -6,6 +6,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -15,14 +16,11 @@ import android.os.Build;
 import android.os.Bundle;
 
 import com.mmp.ayatsurikun.R;
-import com.mmp.ayatsurikun.contract.DeviceListViewContract;
 import com.mmp.ayatsurikun.databinding.ActivityMainBinding;
-import com.mmp.ayatsurikun.model.scanner.DeviceScanner;
 import com.mmp.ayatsurikun.viewmodel.DeviceListViewModel;
 
-import java.util.List;
-
-public class MainActivity extends AppCompatActivity implements DeviceListViewContract {
+//@AndroidEntryPoint
+public class DeviceListActivity extends AppCompatActivity {
 
     private DeviceAdapter deviceAdapter;
     private DeviceListViewModel deviceListViewModel;
@@ -34,12 +32,18 @@ public class MainActivity extends AppCompatActivity implements DeviceListViewCon
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-        deviceListViewModel = new DeviceListViewModel(this);
+        DeviceListViewModel.Factory factory = new DeviceListViewModel.Factory();
+        deviceListViewModel = new ViewModelProvider(this, factory).get(DeviceListViewModel.class);
         binding.setViewModel(deviceListViewModel);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             checkPermission();
         }
         setupViews();
+        deviceListViewModel.devices.observe(this, devices -> {
+
+        });
+        deviceListViewModel.getSelectedDevice().observe(this, device -> SignalButtonsActivity.start(
+                this, device.getId(), device.getPort(), device.getConnectionType()));
     }
 
     @Override
@@ -58,17 +62,8 @@ public class MainActivity extends AppCompatActivity implements DeviceListViewCon
     private void setupViews() {
         RecyclerView recyclerView = findViewById(R.id.recycler_dev);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        deviceAdapter = new DeviceAdapter(this, this);
+        deviceAdapter = new DeviceAdapter(deviceListViewModel);
         recyclerView.setAdapter(deviceAdapter);
-    }
-
-    @Override
-    public void showDevices(List<DeviceScanner.DeviceItem> deviceItems) {
-        deviceAdapter.setItemsAndRefresh(deviceItems);
-    }
-
-    @Override
-    public void startSignalButtonsActivity(String deviceId, int port, String connectionMethod) {
-        SignalButtonsActivity.start(this, deviceId, port, connectionMethod);
+        deviceListViewModel.devices.observe(this, devices -> deviceAdapter.submitList(devices));
     }
 }
