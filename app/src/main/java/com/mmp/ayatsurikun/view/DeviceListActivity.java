@@ -6,6 +6,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -15,16 +16,11 @@ import android.os.Build;
 import android.os.Bundle;
 
 import com.mmp.ayatsurikun.R;
-import com.mmp.ayatsurikun.contract.DeviceListViewContract;
 import com.mmp.ayatsurikun.databinding.ActivityMainBinding;
-import com.mmp.ayatsurikun.model.ConnectionMethod;
-import com.mmp.ayatsurikun.model.Device;
 import com.mmp.ayatsurikun.viewmodel.DeviceListViewModel;
 
-import java.util.List;
-
 //@AndroidEntryPoint
-public class SelectDeviceActivity extends AppCompatActivity implements DeviceListViewContract {
+public class DeviceListActivity extends AppCompatActivity {
 
     private DeviceAdapter deviceAdapter;
     private DeviceListViewModel deviceListViewModel;
@@ -36,12 +32,18 @@ public class SelectDeviceActivity extends AppCompatActivity implements DeviceLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-        deviceListViewModel = new DeviceListViewModel(this);
+        DeviceListViewModel.Factory factory = new DeviceListViewModel.Factory();
+        deviceListViewModel = new ViewModelProvider(this, factory).get(DeviceListViewModel.class);
         binding.setViewModel(deviceListViewModel);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             checkPermission();
         }
         setupViews();
+        deviceListViewModel.devices.observe(this, devices -> {
+
+        });
+        deviceListViewModel.getSelectedDevice().observe(this, device -> SignalButtonsActivity.start(
+                this, device.getId(), device.getPort(), device.getConnectionType()));
     }
 
     @Override
@@ -60,17 +62,8 @@ public class SelectDeviceActivity extends AppCompatActivity implements DeviceLis
     private void setupViews() {
         RecyclerView recyclerView = findViewById(R.id.recycler_dev);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        deviceAdapter = new DeviceAdapter(this, this);
+        deviceAdapter = new DeviceAdapter(deviceListViewModel);
         recyclerView.setAdapter(deviceAdapter);
-    }
-
-    @Override
-    public void showDevices(List<Device> devices) {
-        deviceAdapter.setItemsAndRefresh(devices);
-    }
-
-    @Override
-    public void startSignalButtonsActivity(String deviceId, int port, ConnectionMethod connectionMethod) {
-        SignalButtonsActivity.start(this, deviceId, port, connectionMethod);
+        deviceListViewModel.devices.observe(this, devices -> deviceAdapter.submitList(devices));
     }
 }

@@ -9,7 +9,7 @@ import android.util.Log;
 import androidx.core.app.ActivityCompat;
 
 import com.mmp.ayatsurikun.App;
-import com.mmp.ayatsurikun.model.ConnectionMethod;
+import com.mmp.ayatsurikun.model.ConnectionType;
 import com.mmp.ayatsurikun.model.Device;
 
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ public class BluetoothDeviceScannerImpl implements DeviceScanner {
                         device.getAddress(),
                         device.getName(),
                         0,
-                        ConnectionMethod.BLUETOOTH_SPP)
+                        ConnectionType.BLUETOOTH_SPP)
                 );
             }
         }

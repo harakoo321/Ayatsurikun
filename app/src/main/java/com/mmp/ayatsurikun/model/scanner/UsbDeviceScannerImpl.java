@@ -7,7 +7,7 @@ import android.hardware.usb.UsbManager;
 import com.hoho.android.usbserial.driver.UsbSerialDriver;
 import com.hoho.android.usbserial.driver.UsbSerialProber;
 import com.mmp.ayatsurikun.App;
-import com.mmp.ayatsurikun.model.ConnectionMethod;
+import com.mmp.ayatsurikun.model.ConnectionType;
 import com.mmp.ayatsurikun.model.CustomProber;
 import com.mmp.ayatsurikun.model.Device;
 
@@ -33,7 +33,7 @@ public class UsbDeviceScannerImpl implements DeviceScanner {
                             device.getDeviceName(),
                             device.getProductName(),
                             port,
-                            ConnectionMethod.USB_SERIAL)
+                            ConnectionType.USB_SERIAL)
                     );
                 }
             } else {
@@ -41,7 +41,7 @@ public class UsbDeviceScannerImpl implements DeviceScanner {
                         device.getDeviceName(),
                         device.getProductName(),
                         0,
-                        ConnectionMethod.USB_SERIAL)
+                        ConnectionType.USB_SERIAL)
                 );
             }
         }
