@@ -7,9 +7,9 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.mmp.ayatsurikun.model.Device;
-import com.mmp.ayatsurikun.model.BluetoothDeviceRepositoryImpl;
-import com.mmp.ayatsurikun.model.DeviceRepository;
-import com.mmp.ayatsurikun.model.UsbDeviceRepositoryImpl;
+import com.mmp.ayatsurikun.repository.BluetoothDeviceRepositoryImpl;
+import com.mmp.ayatsurikun.repository.DeviceRepository;
+import com.mmp.ayatsurikun.repository.UsbDeviceRepositoryImpl;
 
 import java.util.ArrayList;
 import java.util.List;

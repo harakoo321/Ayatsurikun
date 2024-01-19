@@ -9,6 +9,8 @@ import android.util.Log;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.mmp.ayatsurikun.util.ConnectionType;
+
 import java.nio.ByteBuffer;
 
 public class BluetoothDevice implements Device, BluetoothCommunicationThread.Listener {

@@ -1,4 +1,4 @@
-package com.mmp.ayatsurikun.model;
+package com.mmp.ayatsurikun.repository;
 
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
@@ -9,6 +9,8 @@ import android.util.Log;
 import androidx.core.app.ActivityCompat;
 
 import com.mmp.ayatsurikun.App;
+import com.mmp.ayatsurikun.util.ConnectionType;
+import com.mmp.ayatsurikun.model.Device;
 
 import java.util.ArrayList;
 import java.util.List;

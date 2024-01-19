@@ -2,7 +2,6 @@ package com.mmp.ayatsurikun.view;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.databinding.DataBindingUtil;
@@ -36,9 +35,7 @@ public class DeviceListActivity extends AppCompatActivity {
         DeviceListViewModel.Factory factory = new DeviceListViewModel.Factory();
         deviceListViewModel = new ViewModelProvider(this, factory).get(DeviceListViewModel.class);
         binding.setViewModel(deviceListViewModel);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            checkPermission();
-        }
+        checkPermission();
         setupViews();
         deviceListViewModel.clearSelectedDevice();
         deviceListViewModel.getSelectedDevice().observe(this, device -> {
@@ -53,10 +50,11 @@ public class DeviceListActivity extends AppCompatActivity {
         deviceListViewModel.loadDevices();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.S)
     private void checkPermission() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissionLauncher.launch(Manifest.permission.BLUETOOTH_CONNECT);
+        if (ActivityCompat.checkSelfPermission(App.ContextProvider.getContext(), Manifest.permission.BLUETOOTH_CONNECT)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) requestPermissionLauncher.launch(Manifest.permission.BLUETOOTH_CONNECT);
+            else requestPermissionLauncher.launch(Manifest.permission.BLUETOOTH);
         }
     }
 

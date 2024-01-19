@@ -1,5 +1,6 @@
 package com.mmp.ayatsurikun.model;
 
+import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -7,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -20,6 +22,8 @@ import com.hoho.android.usbserial.driver.UsbSerialProber;
 import com.hoho.android.usbserial.util.SerialInputOutputManager;
 import com.mmp.ayatsurikun.App;
 import com.mmp.ayatsurikun.BuildConfig;
+import com.mmp.ayatsurikun.util.ConnectionType;
+import com.mmp.ayatsurikun.util.CustomProber;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -95,13 +99,21 @@ public class UsbDevice implements Device, SerialInputOutputManager.Listener {
     /*
      * Serial + UI
      */
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
     @Override
     public void connect() {
-        App.ContextProvider.getContext().registerReceiver(
-                broadcastReceiver,
-                new IntentFilter(INTENT_ACTION_GRANT_USB),
-                Context.RECEIVER_NOT_EXPORTED
-        );
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            App.ContextProvider.getContext().registerReceiver(
+                    broadcastReceiver,
+                    new IntentFilter(INTENT_ACTION_GRANT_USB),
+                    Context.RECEIVER_NOT_EXPORTED
+            );
+        } else {
+            App.ContextProvider.getContext().registerReceiver(
+                    broadcastReceiver,
+                    new IntentFilter(INTENT_ACTION_GRANT_USB)
+            );
+        }
         android.hardware.usb.UsbDevice device = null;
         UsbManager usbManager =
                 (UsbManager) App.ContextProvider.getContext().getSystemService(Context.USB_SERVICE);

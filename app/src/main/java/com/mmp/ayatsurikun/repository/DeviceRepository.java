@@ -1,4 +1,6 @@
-package com.mmp.ayatsurikun.model;
+package com.mmp.ayatsurikun.repository;
+
+import com.mmp.ayatsurikun.model.Device;
 
 import java.util.List;
 

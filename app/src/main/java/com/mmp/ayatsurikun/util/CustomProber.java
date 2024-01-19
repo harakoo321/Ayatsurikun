@@ -1,4 +1,4 @@
-package com.mmp.ayatsurikun.model;
+package com.mmp.ayatsurikun.util;
 
 import com.hoho.android.usbserial.driver.FtdiSerialDriver;
 import com.hoho.android.usbserial.driver.ProbeTable;

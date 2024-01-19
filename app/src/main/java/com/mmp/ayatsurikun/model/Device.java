@@ -2,6 +2,8 @@ package com.mmp.ayatsurikun.model;
 
 import androidx.lifecycle.LiveData;
 
+import com.mmp.ayatsurikun.util.ConnectionType;
+
 public interface Device {
     String getId();
     String getName();
