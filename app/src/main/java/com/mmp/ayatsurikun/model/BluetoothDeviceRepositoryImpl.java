@@ -1,4 +1,4 @@
-package com.mmp.ayatsurikun.model.scanner;
+package com.mmp.ayatsurikun.model;
 
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
@@ -9,14 +9,12 @@ import android.util.Log;
 import androidx.core.app.ActivityCompat;
 
 import com.mmp.ayatsurikun.App;
-import com.mmp.ayatsurikun.model.ConnectionType;
-import com.mmp.ayatsurikun.model.Device;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-public class BluetoothDeviceScannerImpl implements DeviceScanner {
+public class BluetoothDeviceRepositoryImpl implements DeviceRepository {
     @Override
     public List<Device> scanDevices() {
         List<Device> deviceItems = new ArrayList<>();
@@ -35,7 +33,7 @@ public class BluetoothDeviceScannerImpl implements DeviceScanner {
         Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
         if (pairedDevices.size() > 0) {
             for (BluetoothDevice device : pairedDevices) {
-                deviceItems.add(new Device(
+                deviceItems.add(new com.mmp.ayatsurikun.model.BluetoothDevice(
                         device.getAddress(),
                         device.getName(),
                         0,

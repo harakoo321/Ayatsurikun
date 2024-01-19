@@ -15,6 +15,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 
+import com.mmp.ayatsurikun.App;
 import com.mmp.ayatsurikun.R;
 import com.mmp.ayatsurikun.databinding.ActivityMainBinding;
 import com.mmp.ayatsurikun.viewmodel.DeviceListViewModel;
@@ -39,11 +40,11 @@ public class DeviceListActivity extends AppCompatActivity {
             checkPermission();
         }
         setupViews();
-        deviceListViewModel.devices.observe(this, devices -> {
-
+        deviceListViewModel.clearSelectedDevice();
+        deviceListViewModel.getSelectedDevice().observe(this, device -> {
+            ((App)getApplication()).setDevice(device);
+            SignalButtonsActivity.start(this);
         });
-        deviceListViewModel.getSelectedDevice().observe(this, device -> SignalButtonsActivity.start(
-                this, device.getId(), device.getPort(), device.getConnectionType()));
     }
 
     @Override
@@ -64,6 +65,6 @@ public class DeviceListActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         deviceAdapter = new DeviceAdapter(deviceListViewModel);
         recyclerView.setAdapter(deviceAdapter);
-        deviceListViewModel.devices.observe(this, devices -> deviceAdapter.submitList(devices));
+        deviceListViewModel.getDevices().observe(this, devices -> deviceAdapter.submitList(devices));
     }
 }

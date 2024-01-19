@@ -10,27 +10,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.mmp.ayatsurikun.App;
 import com.mmp.ayatsurikun.R;
 import com.mmp.ayatsurikun.contract.SignalButtonsContract;
 import com.mmp.ayatsurikun.databinding.ActivitySignalButtonsBinding;
-import com.mmp.ayatsurikun.model.ConnectionType;
 import com.mmp.ayatsurikun.viewmodel.SignalButtonsViewModel;
 
 public class SignalButtonsActivity extends AppCompatActivity implements SignalButtonsContract {
-    private static final String EXTRA_DEVICE_ID = "EXTRA_DEVICE_ID";
-    private static final String EXTRA_PORT = "EXTRA_PORT";
-    private static final String EXTRA_CONNECTION_METHOD = "EXTRA_CONNECTION_METHOD";
     private SignalButtonsViewModel viewModel;
     private AddButtonDialogFragment dialogFragment;
-
     private ActivitySignalButtonsBinding binding;
 
-    public static void start(Context context, String deviceId, int portNum, ConnectionType connectionType) {
+    public static void start(Context context) {
         final Intent intent = new Intent(context, SignalButtonsActivity.class);
-        intent.putExtra(EXTRA_DEVICE_ID, deviceId);
-        intent.putExtra(EXTRA_PORT, portNum);
-        intent.putExtra(EXTRA_CONNECTION_METHOD, connectionType);
-
         context.startActivity(intent);
     }
 
@@ -38,12 +30,8 @@ public class SignalButtonsActivity extends AppCompatActivity implements SignalBu
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_signal_buttons);
-        final Intent intent = getIntent();
         SignalButtonsViewModel.Factory factory = new SignalButtonsViewModel.Factory(
-                intent.getStringExtra(EXTRA_DEVICE_ID),
-                intent.getIntExtra(EXTRA_PORT, 0),
-                115200,
-                (ConnectionType)intent.getSerializableExtra(EXTRA_CONNECTION_METHOD)
+                ((App)getApplication()).getDevice()
         );
         viewModel = new ViewModelProvider(this, factory).get(SignalButtonsViewModel.class);
         dialogFragment = new AddButtonDialogFragment(viewModel);
@@ -53,12 +41,7 @@ public class SignalButtonsActivity extends AppCompatActivity implements SignalBu
             viewModel.setSignal(bytes);
             startAddButtonDialog();
         });
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        viewModel.setUp(this);
+        viewModel.connect();
     }
 
     @Override

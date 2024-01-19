@@ -1,4 +1,4 @@
-package com.mmp.ayatsurikun.model.scanner;
+package com.mmp.ayatsurikun.model;
 
 import android.content.Context;
 import android.hardware.usb.UsbDevice;
@@ -7,14 +7,11 @@ import android.hardware.usb.UsbManager;
 import com.hoho.android.usbserial.driver.UsbSerialDriver;
 import com.hoho.android.usbserial.driver.UsbSerialProber;
 import com.mmp.ayatsurikun.App;
-import com.mmp.ayatsurikun.model.ConnectionType;
-import com.mmp.ayatsurikun.model.CustomProber;
-import com.mmp.ayatsurikun.model.Device;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class UsbDeviceScannerImpl implements DeviceScanner {
+public class UsbDeviceRepositoryImpl implements DeviceRepository {
     @Override
     public List<Device> scanDevices() {
         List<Device> deviceItems = new ArrayList<>();
@@ -29,7 +26,7 @@ public class UsbDeviceScannerImpl implements DeviceScanner {
             }
             if(driver != null) {
                 for(int port = 0; port < driver.getPorts().size(); port++) {
-                    deviceItems.add(new Device(
+                    deviceItems.add(new com.mmp.ayatsurikun.model.UsbDevice(
                             device.getDeviceName(),
                             device.getProductName(),
                             port,
@@ -37,7 +34,7 @@ public class UsbDeviceScannerImpl implements DeviceScanner {
                     );
                 }
             } else {
-                deviceItems.add(new Device(
+                deviceItems.add(new com.mmp.ayatsurikun.model.UsbDevice(
                         device.getDeviceName(),
                         device.getProductName(),
                         0,

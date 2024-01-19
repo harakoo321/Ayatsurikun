@@ -3,41 +3,48 @@ package com.mmp.ayatsurikun.viewmodel;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.mmp.ayatsurikun.model.Device;
-import com.mmp.ayatsurikun.model.scanner.BluetoothDeviceScannerImpl;
-import com.mmp.ayatsurikun.model.scanner.DeviceScanner;
-import com.mmp.ayatsurikun.model.scanner.UsbDeviceScannerImpl;
+import com.mmp.ayatsurikun.model.BluetoothDeviceRepositoryImpl;
+import com.mmp.ayatsurikun.model.DeviceRepository;
+import com.mmp.ayatsurikun.model.UsbDeviceRepositoryImpl;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class DeviceListViewModel extends ViewModel {
-    private final List<DeviceScanner> deviceScanners = new ArrayList<>();
-    private final MutableLiveData<List<Device>> _devices = new MutableLiveData<>();
-    public LiveData<List<Device>> devices = Transformations.distinctUntilChanged(_devices);
-    private final MutableLiveData<Device> selectedDevice = new MutableLiveData<>();
+    private final List<DeviceRepository> deviceRepositories = new ArrayList<>();
+    private final MutableLiveData<List<Device>> devices = new MutableLiveData<>();
+    private MutableLiveData<Device> selectedDevice;
+
 
     //@Inject
     public DeviceListViewModel() {
-        deviceScanners.add(new UsbDeviceScannerImpl());
-        deviceScanners.add(new BluetoothDeviceScannerImpl());
+        deviceRepositories.add(new UsbDeviceRepositoryImpl());
+        deviceRepositories.add(new BluetoothDeviceRepositoryImpl());
+    }
+
+    public LiveData<List<Device>> getDevices() {
+        return devices;
     }
 
     public LiveData<Device> getSelectedDevice() {
         return selectedDevice;
     }
 
+    public void clearSelectedDevice() {
+        selectedDevice = new MutableLiveData<>();
+    }
+
     public void loadDevices() {
         List<Device> deviceItems = new ArrayList<>();
-        for (DeviceScanner deviceScanner : deviceScanners) {
-            List<Device> items = deviceScanner.scanDevices();
+        for (DeviceRepository deviceRepository : deviceRepositories) {
+            List<Device> items = deviceRepository.scanDevices();
             if (items != null) deviceItems.addAll(items);
         }
-        _devices.setValue(deviceItems);
+        devices.setValue(deviceItems);
     }
 
     public void onItemClick(Device device) {
