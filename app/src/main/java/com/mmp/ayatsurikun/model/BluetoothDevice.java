@@ -1,21 +1,22 @@
-package com.mmp.ayatsurikun.model.connector;
+package com.mmp.ayatsurikun.model;
 
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.mmp.ayatsurikun.contract.SignalButtonsContract;
-
 import java.nio.ByteBuffer;
 
-public class BluetoothConnectorImpl implements DeviceConnector, BluetoothCommunicationThread.Listener {
-    private SignalButtonsContract contract;
-    private final String macAddress;
+public class BluetoothDevice implements Device, BluetoothCommunicationThread.Listener {
+    private static final String TAG = BluetoothDevice.class.getSimpleName();
+    private final String id;
+    private final String name;
+    private final int port;
+    private final ConnectionType connectionType;
     private final Handler mainLooper = new Handler(Looper.getMainLooper());
     private BluetoothConnectThread connectThread;
     private BluetoothCommunicationThread communicationThread;
@@ -27,43 +28,47 @@ public class BluetoothConnectorImpl implements DeviceConnector, BluetoothCommuni
         public void connected(BluetoothSocket socket) {
             communicationThread = new BluetoothCommunicationThread(socket, listener);
             communicationThread.start();
-            mainLooper.post(() -> status("connected"));
+            mainLooper.post(() -> Log.i(TAG, "connected"));
         }
 
         @Override
         public void connectionFailed() {
-            mainLooper.post(() -> status("connection failed"));
+            mainLooper.post(() -> Log.e(TAG, "connection failed"));
         }
     };
 
-    public BluetoothConnectorImpl(String macAddress) {
-        this.macAddress = macAddress;
+    public BluetoothDevice(String id, String name, int port, ConnectionType connectionType) {
+        this.id = id;
+        this.name = name;
+        this.port = port;
+        this.connectionType = connectionType;
     }
 
     @Override
-    public void onNewData(byte[] data) {
-        mainLooper.post(() -> receive(data));
+    public String getId() {
+        return id;
     }
 
     @Override
-    public void onRunError(Exception e) {
-        mainLooper.post(() -> {
-            status("connection lost: " + e.getMessage());
-            disconnect();
-        });
+    public String getName() {
+        return name;
     }
 
     @Override
-    public void setUp(SignalButtonsContract contract) {
-        this.contract = contract;
-        mainLooper.post(this::connect);
+    public ConnectionType getConnectionType() {
+        return connectionType;
+    }
+
+    @Override
+    public LiveData<byte[]> getSignal() {
+        return this.signal;
     }
 
     @Override
     public void connect() {
-        BluetoothDevice device = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(macAddress);
+        android.bluetooth.BluetoothDevice device = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(id);
         if (device == null) {
-            status("device not found.");
+            Log.e(TAG, "device not found.");
             return;
         }
         connectThread = new BluetoothConnectThread(device, callback);
@@ -74,25 +79,22 @@ public class BluetoothConnectorImpl implements DeviceConnector, BluetoothCommuni
     public void disconnect() {
         if (connectThread == null) return;
         if(connectThread.isConnected()) {
-            if(communicationThread != null) {
-                communicationThread.setListener(null);
-                communicationThread.cancel();
-            }
-            communicationThread = null;
-            if (connectThread.isConnected())connectThread.cancel();
-            connectThread = null;
-            status("disconnected");
+            communicationThread.cancel();
+            connectThread.cancel();
+            Log.i(TAG, "disconnected");
         }
+        communicationThread = null;
+        connectThread = null;
     }
 
     @Override
     public void send(byte[] signal) {
         if(connectThread == null) {
-            status("not connected");
+            Log.e(TAG, "not connected");
             return;
         }
         if(!connectThread.isConnected()) {
-            status("not connected");
+            Log.e(TAG, "not connected");
             return;
         }
         try {
@@ -111,18 +113,30 @@ public class BluetoothConnectorImpl implements DeviceConnector, BluetoothCommuni
             this.data = byteBuffer.array();
         }
         if ((char) data[data.length - 1] == '\n') {
-            status("received");
+            Log.i(TAG, "received");
             signal.postValue(this.data);
             this.data = null;
         }
     }
 
     @Override
-    public LiveData<byte[]> getSignal() {
-        return this.signal;
+    public void onNewData(byte[] data) {
+        mainLooper.post(() -> receive(data));
     }
 
-    private void status(String str) {
-        contract.showToast(str);
+    @Override
+    public void onRunError(Exception e) {
+        mainLooper.post(this::disconnect);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof BluetoothDevice)) return false;
+        BluetoothDevice that = (BluetoothDevice) o;
+        return id.equals(that.id) &&
+                name.equals(that.name) &&
+                port == that.port &&
+                connectionType == that.connectionType;
     }
 }

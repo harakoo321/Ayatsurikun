@@ -1,4 +1,4 @@
-package com.mmp.ayatsurikun.model.connector;
+package com.mmp.ayatsurikun.model;
 
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;

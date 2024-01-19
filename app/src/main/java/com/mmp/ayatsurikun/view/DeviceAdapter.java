@@ -1,75 +1,58 @@
 package com.mmp.ayatsurikun.view;
 
 import androidx.annotation.NonNull;
-import androidx.databinding.DataBindingUtil;
-import androidx.lifecycle.LifecycleOwner;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
-import com.mmp.ayatsurikun.R;
-import com.mmp.ayatsurikun.contract.DeviceListViewContract;
 import com.mmp.ayatsurikun.databinding.DeviceItemBinding;
-import com.mmp.ayatsurikun.model.scanner.DeviceScanner;
-import com.mmp.ayatsurikun.viewmodel.DeviceItemViewModel;
+import com.mmp.ayatsurikun.model.Device;
+import com.mmp.ayatsurikun.viewmodel.DeviceListViewModel;
 
-import java.util.List;
+public class DeviceAdapter extends ListAdapter<Device, DeviceAdapter.DeviceViewHolder> {
+    private final DeviceListViewModel viewModel;
 
-public class DeviceAdapter extends RecyclerView.Adapter<DeviceAdapter.DeviceViewHolder> {
-    private final DeviceListViewContract view;
-    private final Context context;
-    private List<DeviceScanner.DeviceItem> items;
+    public DeviceAdapter(DeviceListViewModel viewModel) {
+        super(new DiffUtil.ItemCallback<Device>() {
+            @Override
+            public boolean areItemsTheSame(@NonNull Device oldItem, @NonNull Device newItem) {
+                return oldItem.getId().equals(newItem.getId());
+            }
 
-    public DeviceAdapter(Context context, DeviceListViewContract view) {
-        this.view = view;
-        this.context = context;
-    }
-
-    public void setItemsAndRefresh(List<DeviceScanner.DeviceItem> items) {
-        this.items = items;
-        notifyDataSetChanged();
-    }
-
-    public DeviceScanner.DeviceItem getItemAt(int position) {
-        return items.get(position);
+            @Override
+            public boolean areContentsTheSame(@NonNull Device oldItem, @NonNull Device newItem) {
+                return oldItem.equals(newItem);
+            }
+        });
+        this.viewModel = viewModel;
     }
 
     @NonNull
     @Override
     public DeviceViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        DeviceItemBinding binding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.device_item, parent, false);
-        binding.setViewModel(new DeviceItemViewModel(view));
-        binding.setLifecycleOwner((LifecycleOwner) view);
-        return new DeviceViewHolder(binding.getRoot(), binding.getViewModel());
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        return new DeviceViewHolder(DeviceItemBinding.inflate(inflater, parent, false));
     }
 
     @Override
     public void onBindViewHolder(final DeviceViewHolder holder, final int position) {
-        final DeviceScanner.DeviceItem item = getItemAt(position);
-        holder.loadItem(item);
-    }
-
-    @Override
-    public int getItemCount() {
-        if (items == null) {
-            return 0;
-        }
-        return items.size();
+        holder.bind(getItem(position), viewModel);
     }
 
     public static class DeviceViewHolder extends RecyclerView.ViewHolder {
-        private final DeviceItemViewModel viewModel;
-
-        public DeviceViewHolder(View itemView, DeviceItemViewModel viewModel) {
-            super(itemView);
-            this.viewModel = viewModel;
+        private final DeviceItemBinding binding;
+        public DeviceViewHolder(DeviceItemBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
 
-        public void loadItem(DeviceScanner.DeviceItem item) {
-            viewModel.loadItem(item);
+        private void bind(Device device, DeviceListViewModel viewModel) {
+            binding.setVariable(com.mmp.ayatsurikun.BR.device, device);
+            binding.setViewModel(viewModel);
+            binding.executePendingBindings();
         }
     }
 }
