@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 
 import com.mmp.ayatsurikun.R;
+import com.mmp.ayatsurikun.contract.SignalButtonsContract;
 import com.mmp.ayatsurikun.viewmodel.SignalButtonsViewModel;
 
 public class AddButtonDialogFragment extends DialogFragment implements DialogInterface.OnClickListener {
@@ -34,7 +35,7 @@ public class AddButtonDialogFragment extends DialogFragment implements DialogInt
     @Override
     public void onClick(DialogInterface dialog, int which) {
         if (which == DialogInterface.BUTTON_POSITIVE) {
-            viewModel.setButtonText(editText.getText().toString());
+            viewModel.setButtonText(editText.getText().toString(), (SignalButtonsContract)getActivity());
         }
     }
 }

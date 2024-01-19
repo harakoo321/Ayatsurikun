@@ -1,4 +1,4 @@
-package com.mmp.ayatsurikun.model.connector;
+package com.mmp.ayatsurikun.model;
 
 import android.bluetooth.BluetoothSocket;
 import android.util.Log;
@@ -9,10 +9,9 @@ import java.io.OutputStream;
 
 public class BluetoothCommunicationThread extends Thread {
     private static final String TAG = BluetoothCommunicationThread.class.getSimpleName();
-    private final BluetoothSocket mmSocket;
     private final InputStream mmInStream;
     private final OutputStream mmOutStream;
-    private Listener listener;
+    private final Listener listener;
 
     public interface Listener {
         void onNewData(byte[] data);
@@ -20,7 +19,6 @@ public class BluetoothCommunicationThread extends Thread {
     }
 
     public BluetoothCommunicationThread(BluetoothSocket socket, Listener listener) {
-        mmSocket = socket;
         this.listener = listener;
         InputStream tmpIn = null;
         OutputStream tmpOut = null;
@@ -40,10 +38,6 @@ public class BluetoothCommunicationThread extends Thread {
 
         mmInStream = tmpIn;
         mmOutStream = tmpOut;
-    }
-
-    public void setListener(Listener listener){
-        this.listener = listener;
     }
 
     public void run() {
@@ -85,10 +79,10 @@ public class BluetoothCommunicationThread extends Thread {
         }
     }
 
-    // Call this method from the main activity to shut down the connection.
     public void cancel() {
         try {
-            mmSocket.close();
+            mmInStream.close();
+            mmOutStream.close();
         } catch (IOException e) {
             Log.e(TAG, "Could not close the connect socket", e);
         }
