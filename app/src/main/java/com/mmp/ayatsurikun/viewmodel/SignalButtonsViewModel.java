@@ -7,16 +7,20 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.mmp.ayatsurikun.contract.SignalButtonsContract;
 import com.mmp.ayatsurikun.model.Device;
+import com.mmp.ayatsurikun.usecase.ConnectionUseCase;
+import com.mmp.ayatsurikun.usecase.ConnectionUseCaseImpl;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class SignalButtonsViewModel extends ViewModel {
     private final Device device;
+    private final ConnectionUseCase connectionUseCase;
     private final Map<String, byte[]> signalHashMap = new HashMap<>();
     private byte[] signal;
     public SignalButtonsViewModel(Device device) {
         this.device = device;
+        connectionUseCase = new ConnectionUseCaseImpl(device);
     }
 
     public LiveData<byte[]> getSignal() {
@@ -37,11 +41,11 @@ public class SignalButtonsViewModel extends ViewModel {
     }
 
     public void connect() {
-        device.connect();
+        connectionUseCase.connect();
     }
 
     public void disconnect() {
-        device.disconnect();
+        connectionUseCase.disconnect();
     }
 
     public static class Factory extends ViewModelProvider.NewInstanceFactory {

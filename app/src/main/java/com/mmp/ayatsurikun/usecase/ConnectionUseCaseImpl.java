@@ -16,9 +16,4 @@ public class ConnectionUseCaseImpl implements ConnectionUseCase{
     public void disconnect() {
         device.disconnect();
     }
-
-    @Override
-    public void send(String label) {
-        //device.send();
-    }
 }
