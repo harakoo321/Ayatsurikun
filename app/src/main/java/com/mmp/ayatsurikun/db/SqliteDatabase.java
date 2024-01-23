@@ -6,7 +6,7 @@ import androidx.room.RoomDatabase;
 
 import com.mmp.ayatsurikun.model.Signal;
 
-@Database(entities = {Signal.class}, version = 1)
+@Database(entities = {Signal.class}, version = 1, exportSchema = false)
 public abstract class SqliteDatabase extends RoomDatabase {
     private static volatile SqliteDatabase INSTANCE;
     public abstract SignalDao signalDao();

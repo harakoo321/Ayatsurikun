@@ -23,7 +23,7 @@ public class SignalRepositoryImpl implements SignalRepository {
     }
 
     public void delete(Signal signal) {
-        signalDao.delete(signal);
+        exec.execute(() -> signalDao.delete(signal));
     }
 
     public LiveData<List<Signal>> findAll() {

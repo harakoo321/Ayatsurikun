@@ -2,6 +2,7 @@ package com.mmp.ayatsurikun.viewmodel;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -18,6 +19,8 @@ public class DeviceControlViewModel extends ViewModel {
     private final ConnectionUseCase connectionUseCase;
     private final SignalUseCase signalUseCase;
     private final LiveData<byte[]> signal;
+    private final MutableLiveData<Signal> longClickedSignal = new MutableLiveData<>();
+
     public DeviceControlViewModel(Device device) {
         this.signal = device.getSignal();
         connectionUseCase = new ConnectionUseCaseImpl(device);
@@ -37,6 +40,14 @@ public class DeviceControlViewModel extends ViewModel {
         connectionUseCase.clear();
     }
 
+    public LiveData<Signal> getLongClickedSignal() {
+        return longClickedSignal;
+    }
+
+    public void clearLongClickedSignal() {
+        longClickedSignal.setValue(null);
+    }
+
     public LiveData<List<Signal>> getAllSignals() {
         return signalUseCase.getAllSignals();
     }
@@ -53,8 +64,14 @@ public class DeviceControlViewModel extends ViewModel {
         connectionUseCase.send(signal.getSignal());
     }
 
-    public void onItemLongClick(Signal signal) {
+    public boolean onItemLongClick(Signal signal) {
+        longClickedSignal.setValue(signal);
+        return true;
+    }
+
+    public void deleteSignal(Signal signal) {
         signalUseCase.deleteSignal(signal);
+        longClickedSignal.setValue(null);
     }
 
     public static class Factory extends ViewModelProvider.NewInstanceFactory {

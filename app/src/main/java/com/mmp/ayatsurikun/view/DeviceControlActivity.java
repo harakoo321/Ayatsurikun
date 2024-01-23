@@ -13,11 +13,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.mmp.ayatsurikun.App;
 import com.mmp.ayatsurikun.R;
 import com.mmp.ayatsurikun.databinding.ActivityDeviceControlBinding;
+import com.mmp.ayatsurikun.model.Signal;
 import com.mmp.ayatsurikun.viewmodel.DeviceControlViewModel;
 
 public class DeviceControlActivity extends AppCompatActivity {
     private DeviceControlViewModel viewModel;
-    private AddButtonDialogFragment dialogFragment;
+    private AddSignalDialogFragment addDialogFragment;
+    private DeleteSignalDialogFragment deleteDialogFragment;
 
     public static void start(Context context) {
         final Intent intent = new Intent(context, DeviceControlActivity.class);
@@ -36,7 +38,10 @@ public class DeviceControlActivity extends AppCompatActivity {
         binding.setLifecycleOwner(this);
         viewModel.connect();
         viewModel.getSignal().observe(this, bytes -> {
-            if(bytes != null) startAddButtonDialog(bytes);
+            if(bytes != null) startAddSignalDialog(bytes);
+        });
+        viewModel.getLongClickedSignal().observe(this, signal -> {
+            if(signal != null) startDeleteSignalDialog(signal);
         });
         RecyclerView recyclerView = findViewById(R.id.recycler_signal);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -53,8 +58,11 @@ public class DeviceControlActivity extends AppCompatActivity {
 
     @Override
     public void onPause() {
-        if (dialogFragment != null && dialogFragment.isAdded()) {
-            dialogFragment.dismiss();
+        if (addDialogFragment != null && addDialogFragment.isAdded()) {
+            addDialogFragment.dismiss();
+        }
+        if (deleteDialogFragment != null && deleteDialogFragment.isAdded()) {
+            deleteDialogFragment.dismiss();
         }
         super.onPause();
     }
@@ -65,9 +73,15 @@ public class DeviceControlActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    public void startAddButtonDialog(byte[] signal) {
-        if(dialogFragment != null && dialogFragment.isAdded()) dialogFragment.dismiss();
-        dialogFragment = new AddButtonDialogFragment(viewModel, signal);
-        dialogFragment.show(getSupportFragmentManager(), "AddButtonDialogFragment");
+    public void startAddSignalDialog(byte[] signal) {
+        if(addDialogFragment != null && addDialogFragment.isAdded()) addDialogFragment.dismiss();
+        addDialogFragment = new AddSignalDialogFragment(viewModel, signal);
+        addDialogFragment.show(getSupportFragmentManager(), "AddButtonDialogFragment");
+    }
+
+    public void startDeleteSignalDialog(Signal signal) {
+        if(deleteDialogFragment != null && deleteDialogFragment.isAdded()) deleteDialogFragment.dismiss();
+        deleteDialogFragment = new DeleteSignalDialogFragment(viewModel, signal);
+        deleteDialogFragment.show(getSupportFragmentManager(), "DeleteSignalDialogFragment");
     }
 }

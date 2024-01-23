@@ -13,4 +13,7 @@
     <string name="driver_not_found">ドライバーが見つかりません</string>
     <string name="port_not_found">ポートが見つかりません</string>
     <string name="permission_denied">権限がありません</string>
+    <string name="confirm">確認</string>
+    <string name="delete_confirm">を削除しますか？</string>
+    <string name="delete">削除</string>
 </resources>

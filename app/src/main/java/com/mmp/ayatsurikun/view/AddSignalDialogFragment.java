@@ -12,11 +12,11 @@ import androidx.fragment.app.DialogFragment;
 import com.mmp.ayatsurikun.R;
 import com.mmp.ayatsurikun.viewmodel.DeviceControlViewModel;
 
-public class AddButtonDialogFragment extends DialogFragment {
+public class AddSignalDialogFragment extends DialogFragment {
     private EditText editText;
     private final DeviceControlViewModel viewModel;
     private final byte[] signal;
-    public AddButtonDialogFragment(DeviceControlViewModel viewModel, byte[] signal) {
+    public AddSignalDialogFragment(DeviceControlViewModel viewModel, byte[] signal) {
         this.viewModel = viewModel;
         this.signal = signal;
     }

@@ -44,7 +44,6 @@ public class UsbDevice implements Device, SerialInputOutputManager.Listener {
     private SerialInputOutputManager usbIoManager;
     private final BroadcastReceiver broadcastReceiver;
     private final Handler mainLooper;
-    private final int baudRate = 115200;
     private boolean connected = false;
     private final MutableLiveData<byte[]> signal = new MutableLiveData<>();
     private byte[] data;
@@ -124,7 +123,7 @@ public class UsbDevice implements Device, SerialInputOutputManager.Listener {
         UsbManager usbManager =
                 (UsbManager) App.ContextProvider.getContext().getSystemService(Context.USB_SERVICE);
         for(android.hardware.usb.UsbDevice v : usbManager.getDeviceList().values())
-            if(v.getDeviceName().equals(name))
+            if(v.getDeviceName().equals(id))
                 device = v;
         if(device == null) {
             Toast.makeText(App.ContextProvider.getContext(), R.string.not_found, Toast.LENGTH_SHORT).show();
@@ -174,7 +173,7 @@ public class UsbDevice implements Device, SerialInputOutputManager.Listener {
         try {
             usbSerialPort.open(usbConnection);
             try{
-                usbSerialPort.setParameters(baudRate, 8, 1, UsbSerialPort.PARITY_NONE);
+                usbSerialPort.setParameters(115200, 8, 1, UsbSerialPort.PARITY_NONE);
             }catch (UnsupportedOperationException e){
                 showToast(R.string.connection_failed);
                 return;
