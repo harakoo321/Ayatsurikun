@@ -19,6 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:clickable="true"
+        android:foreground="?attr/selectableItemBackground"
         android:onClick="@{() -> viewModel.onItemClick(device)}"
         android:orientation="vertical"
         android:focusable="true"

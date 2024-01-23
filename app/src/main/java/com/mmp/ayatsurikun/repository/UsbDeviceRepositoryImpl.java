@@ -1,4 +1,4 @@
-package com.mmp.ayatsurikun.model;
+package com.mmp.ayatsurikun.repository;
 
 import android.content.Context;
 import android.hardware.usb.UsbDevice;
@@ -7,6 +7,9 @@ import android.hardware.usb.UsbManager;
 import com.hoho.android.usbserial.driver.UsbSerialDriver;
 import com.hoho.android.usbserial.driver.UsbSerialProber;
 import com.mmp.ayatsurikun.App;
+import com.mmp.ayatsurikun.util.ConnectionType;
+import com.mmp.ayatsurikun.util.CustomProber;
+import com.mmp.ayatsurikun.model.Device;
 
 import java.util.ArrayList;
 import java.util.List;
