@@ -1,8 +1,14 @@
 package com.mmp.ayatsurikun.model;
 
+import android.Manifest;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.pm.PackageManager;
 import android.util.Log;
+
+import androidx.core.app.ActivityCompat;
+
+import com.mmp.ayatsurikun.App;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -12,8 +18,10 @@ public class BluetoothConnectThread extends Thread {
     private static final UUID BLUETOOTH_SPP = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private final BluetoothSocket mmSocket;
     private final ConnectedCallback connectedCallback;
+
     public interface ConnectedCallback {
         void connected(BluetoothSocket socket);
+
         void connectionFailed();
     }
 
@@ -24,8 +32,7 @@ public class BluetoothConnectThread extends Thread {
         this.connectedCallback = connectedCallback;
 
         try {
-            // Get a BluetoothSocket to connect with the given BluetoothDevice.
-            // MY_UUID is the app's UUID string, also used in the server code.
+            checkPermission();
             tmp = device.createRfcommSocketToServiceRecord(BLUETOOTH_SPP);
         } catch (IOException e) {
             Log.e(TAG, "Socket's create() method failed", e);
@@ -37,6 +44,7 @@ public class BluetoothConnectThread extends Thread {
         try {
             // Connect to the remote device through the socket. This call blocks
             // until it succeeds or throws an exception.
+            checkPermission();
             mmSocket.connect();
         } catch (IOException connectException) {
             // Unable to connect; close the socket and return.
@@ -65,6 +73,13 @@ public class BluetoothConnectThread extends Thread {
             mmSocket.close();
         } catch (IOException e) {
             Log.e(TAG, "Could not close the client socket", e);
+        }
+    }
+
+    private void checkPermission() throws IOException {
+        if (ActivityCompat.checkSelfPermission(App.ContextProvider.getContext(), Manifest.permission.BLUETOOTH_CONNECT)
+                != PackageManager.PERMISSION_GRANTED) {
+            throw new IOException("Permission denied");
         }
     }
 }

@@ -2,7 +2,6 @@ package com.mmp.ayatsurikun.view;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.databinding.DataBindingUtil;
@@ -17,13 +16,12 @@ import android.os.Bundle;
 
 import com.mmp.ayatsurikun.App;
 import com.mmp.ayatsurikun.R;
-import com.mmp.ayatsurikun.databinding.ActivityMainBinding;
+import com.mmp.ayatsurikun.databinding.ActivityDeviceListBinding;
 import com.mmp.ayatsurikun.viewmodel.DeviceListViewModel;
 
 //@AndroidEntryPoint
 public class DeviceListActivity extends AppCompatActivity {
 
-    private DeviceAdapter deviceAdapter;
     private DeviceListViewModel deviceListViewModel;
 
     private final ActivityResultLauncher<String> requestPermissionLauncher =
@@ -32,18 +30,16 @@ public class DeviceListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        ActivityDeviceListBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_device_list);
         DeviceListViewModel.Factory factory = new DeviceListViewModel.Factory();
         deviceListViewModel = new ViewModelProvider(this, factory).get(DeviceListViewModel.class);
         binding.setViewModel(deviceListViewModel);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            checkPermission();
-        }
+        checkPermission();
         setupViews();
         deviceListViewModel.clearSelectedDevice();
         deviceListViewModel.getSelectedDevice().observe(this, device -> {
             ((App)getApplication()).setDevice(device);
-            SignalButtonsActivity.start(this);
+            DeviceControlActivity.start(this);
         });
     }
 
@@ -53,18 +49,19 @@ public class DeviceListActivity extends AppCompatActivity {
         deviceListViewModel.loadDevices();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.S)
     private void checkPermission() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissionLauncher.launch(Manifest.permission.BLUETOOTH_CONNECT);
+        if (ActivityCompat.checkSelfPermission(App.ContextProvider.getContext(), Manifest.permission.BLUETOOTH_CONNECT)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) requestPermissionLauncher.launch(Manifest.permission.BLUETOOTH_CONNECT);
+            else requestPermissionLauncher.launch(Manifest.permission.BLUETOOTH);
         }
     }
 
     private void setupViews() {
         RecyclerView recyclerView = findViewById(R.id.recycler_dev);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        deviceAdapter = new DeviceAdapter(deviceListViewModel);
+        DeviceAdapter deviceAdapter = new DeviceAdapter(deviceListViewModel);
         recyclerView.setAdapter(deviceAdapter);
-        deviceListViewModel.getDevices().observe(this, devices -> deviceAdapter.submitList(devices));
+        deviceListViewModel.getDevices().observe(this, deviceAdapter::submitList);
     }
 }

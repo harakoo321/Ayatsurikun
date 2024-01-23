@@ -7,23 +7,19 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.mmp.ayatsurikun.model.Device;
-import com.mmp.ayatsurikun.model.BluetoothDeviceRepositoryImpl;
-import com.mmp.ayatsurikun.model.DeviceRepository;
-import com.mmp.ayatsurikun.model.UsbDeviceRepositoryImpl;
+import com.mmp.ayatsurikun.usecase.ScanDevicesUseCase;
+import com.mmp.ayatsurikun.usecase.ScanDevicesUseCaseImpl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class DeviceListViewModel extends ViewModel {
-    private final List<DeviceRepository> deviceRepositories = new ArrayList<>();
     private final MutableLiveData<List<Device>> devices = new MutableLiveData<>();
     private MutableLiveData<Device> selectedDevice;
-
+    private final ScanDevicesUseCase scanDevicesUseCase;
 
     //@Inject
     public DeviceListViewModel() {
-        deviceRepositories.add(new UsbDeviceRepositoryImpl());
-        deviceRepositories.add(new BluetoothDeviceRepositoryImpl());
+        scanDevicesUseCase = new ScanDevicesUseCaseImpl();
     }
 
     public LiveData<List<Device>> getDevices() {
@@ -39,12 +35,7 @@ public class DeviceListViewModel extends ViewModel {
     }
 
     public void loadDevices() {
-        List<Device> deviceItems = new ArrayList<>();
-        for (DeviceRepository deviceRepository : deviceRepositories) {
-            List<Device> items = deviceRepository.scanDevices();
-            if (items != null) deviceItems.addAll(items);
-        }
-        devices.setValue(deviceItems);
+        devices.setValue(scanDevicesUseCase.scanAllDevices());
     }
 
     public void onItemClick(Device device) {

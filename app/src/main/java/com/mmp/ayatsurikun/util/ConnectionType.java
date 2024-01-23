@@ -1,4 +1,4 @@
-package com.mmp.ayatsurikun.model;
+package com.mmp.ayatsurikun.util;
 
 public enum ConnectionType {
     USB_SERIAL,

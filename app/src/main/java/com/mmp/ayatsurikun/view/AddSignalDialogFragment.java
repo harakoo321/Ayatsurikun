@@ -10,14 +10,15 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 
 import com.mmp.ayatsurikun.R;
-import com.mmp.ayatsurikun.contract.SignalButtonsContract;
-import com.mmp.ayatsurikun.viewmodel.SignalButtonsViewModel;
+import com.mmp.ayatsurikun.viewmodel.DeviceControlViewModel;
 
-public class AddButtonDialogFragment extends DialogFragment implements DialogInterface.OnClickListener {
+public class AddSignalDialogFragment extends DialogFragment {
     private EditText editText;
-    private final SignalButtonsViewModel viewModel;
-    public AddButtonDialogFragment(SignalButtonsViewModel viewModel) {
+    private final DeviceControlViewModel viewModel;
+    private final byte[] signal;
+    public AddSignalDialogFragment(DeviceControlViewModel viewModel, byte[] signal) {
         this.viewModel = viewModel;
+        this.signal = signal;
     }
     @NonNull
     @Override
@@ -27,15 +28,12 @@ public class AddButtonDialogFragment extends DialogFragment implements DialogInt
         builder.setTitle(R.string.dialog_title);
         builder.setMessage(R.string.dialog_msg);
         builder.setView(editText);
-        builder.setPositiveButton(R.string.dialog_btn_ok, this);
-        builder.setNegativeButton(R.string.dialog_btn_ng, this);
+        builder.setPositiveButton(R.string.dialog_btn_ok, (dialog, which) -> {
+            if (which == DialogInterface.BUTTON_POSITIVE) {
+                viewModel.addSignal(editText.getText().toString(), signal);
+            }
+        });
+        builder.setNegativeButton(R.string.dialog_btn_ng, (dialog, which) -> viewModel.cancel());
         return builder.create();
-    }
-
-    @Override
-    public void onClick(DialogInterface dialog, int which) {
-        if (which == DialogInterface.BUTTON_POSITIVE) {
-            viewModel.setButtonText(editText.getText().toString(), (SignalButtonsContract)getActivity());
-        }
     }
 }

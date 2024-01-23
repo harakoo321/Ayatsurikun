@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.mmp.ayatsurikun.viewmodel.DeviceControlViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".view.DeviceControlActivity">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_signal"
+            android:name="com.mmp.ayatsurikun.view.DeviceControlActivity"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            app:layoutManager="LinearLayoutManager"
+            tools:context=".view.DeviceControlActivity"
+            tools:listitem="@layout/signal_item" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
