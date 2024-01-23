@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -22,6 +23,7 @@ import com.hoho.android.usbserial.driver.UsbSerialProber;
 import com.hoho.android.usbserial.util.SerialInputOutputManager;
 import com.mmp.ayatsurikun.App;
 import com.mmp.ayatsurikun.BuildConfig;
+import com.mmp.ayatsurikun.R;
 import com.mmp.ayatsurikun.util.ConnectionType;
 import com.mmp.ayatsurikun.util.CustomProber;
 
@@ -92,7 +94,6 @@ public class UsbDevice implements Device, SerialInputOutputManager.Listener {
 
     @Override
     public void onRunError(Exception e) {
-        Log.e(TAG, "connection lost: " + e.getMessage());
         mainLooper.post(this::disconnect);
     }
 
@@ -121,7 +122,7 @@ public class UsbDevice implements Device, SerialInputOutputManager.Listener {
             if(v.getDeviceName().equals(name))
                 device = v;
         if(device == null) {
-            Log.e(TAG, "connection failed: device not found");
+            Toast.makeText(App.ContextProvider.getContext(), R.string.not_found, Toast.LENGTH_SHORT).show();
             return;
         }
         UsbSerialDriver driver = UsbSerialProber.getDefaultProber().probeDevice(device);
@@ -129,11 +130,11 @@ public class UsbDevice implements Device, SerialInputOutputManager.Listener {
             driver = CustomProber.getCustomProber().probeDevice(device);
         }
         if(driver == null) {
-            Log.e(TAG, "connection failed: no driver for device");
+            showToast(R.string.driver_not_found);
             return;
         }
         if(driver.getPorts().size() < port) {
-            Log.e(TAG, "connection failed: not enough ports at device");
+            showToast(R.string.port_not_found);
             return;
         }
         usbSerialPort = driver.getPorts().get(port);
@@ -141,7 +142,7 @@ public class UsbDevice implements Device, SerialInputOutputManager.Listener {
         try{
             usbConnection = usbManager.openDevice(driver.getDevice());
         } catch (SecurityException e) {
-            Log.e(TAG, "connection failed: permission denied for device");
+            showToast(R.string.permission_denied);
         }
         if(usbConnection == null && usbPermission == UsbPermission.Unknown && !usbManager.hasPermission(driver.getDevice())) {
             usbPermission = UsbPermission.Requested;
@@ -157,10 +158,10 @@ public class UsbDevice implements Device, SerialInputOutputManager.Listener {
         }
         if(usbConnection == null) {
             if (!usbManager.hasPermission(driver.getDevice())) {
-                Log.e(TAG, "connection failed: permission denied for device");
+                showToast(R.string.permission_denied);
             }
             else {
-                Log.e(TAG, "connection failed: open failed for device");
+                showToast(R.string.connection_failed);
             }
             return;
         }
@@ -170,14 +171,15 @@ public class UsbDevice implements Device, SerialInputOutputManager.Listener {
             try{
                 usbSerialPort.setParameters(baudRate, 8, 1, UsbSerialPort.PARITY_NONE);
             }catch (UnsupportedOperationException e){
-                Log.e(TAG, "unsupport setparameters");
+                showToast(R.string.connection_failed);
+                return;
             }
             usbIoManager = new SerialInputOutputManager(usbSerialPort, this);
             usbIoManager.start();
+            showToast(R.string.connected);
             connected = true;
         } catch (Exception e) {
-            Log.e(TAG, "connection failed: " + e.getMessage());
-            disconnect();
+            onRunError(e);
         }
     }
 
@@ -195,19 +197,20 @@ public class UsbDevice implements Device, SerialInputOutputManager.Listener {
                 usbSerialPort.close();
             } catch (IOException ignored) {}
             usbSerialPort = null;
-            Log.e(TAG, "disconnected");
+            showToast(R.string.disconnected);
+            return;
         }
+        showToast(R.string.not_connected);
     }
 
     @Override
     public void send(byte[] signal) {
         if(!connected) {
-            Log.e(TAG, "not connected");
+            showToast(R.string.not_connected);
             return;
         }
         try {
             usbSerialPort.write(signal, WRITE_WAIT_MILLIS);
-
         } catch (Exception e) {
             onRunError(e);
         }
@@ -239,5 +242,9 @@ public class UsbDevice implements Device, SerialInputOutputManager.Listener {
                 name.equals(that.name) &&
                 port == that.port &&
                 connectionType == that.connectionType;
+    }
+
+    private void showToast(int resId) {
+        Toast.makeText(App.ContextProvider.getContext(), resId, Toast.LENGTH_SHORT).show();
     }
 }

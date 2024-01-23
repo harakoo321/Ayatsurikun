@@ -5,10 +5,13 @@ import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.mmp.ayatsurikun.App;
+import com.mmp.ayatsurikun.R;
 import com.mmp.ayatsurikun.util.ConnectionType;
 
 import java.nio.ByteBuffer;
@@ -30,12 +33,12 @@ public class BluetoothDevice implements Device, BluetoothCommunicationThread.Lis
         public void connected(BluetoothSocket socket) {
             communicationThread = new BluetoothCommunicationThread(socket, listener);
             communicationThread.start();
-            mainLooper.post(() -> Log.i(TAG, "connected"));
+            mainLooper.post(() -> showToast(R.string.connected));
         }
 
         @Override
         public void connectionFailed() {
-            mainLooper.post(() -> Log.e(TAG, "connection failed"));
+            mainLooper.post(() -> showToast(R.string.connection_failed));
         }
     };
 
@@ -70,7 +73,7 @@ public class BluetoothDevice implements Device, BluetoothCommunicationThread.Lis
     public void connect() {
         android.bluetooth.BluetoothDevice device = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(id);
         if (device == null) {
-            Log.e(TAG, "device not found.");
+            showToast(R.string.not_found);
             return;
         }
         connectThread = new BluetoothConnectThread(device, callback);
@@ -79,24 +82,22 @@ public class BluetoothDevice implements Device, BluetoothCommunicationThread.Lis
 
     @Override
     public void disconnect() {
-        if (connectThread == null) return;
+        if (connectThread == null) {
+            showToast(R.string.not_connected);
+            return;
+        }
         if(connectThread.isConnected()) {
             communicationThread.cancel();
             connectThread.cancel();
-            Log.i(TAG, "disconnected");
+            showToast(R.string.disconnected);
+
         }
-        communicationThread = null;
-        connectThread = null;
     }
 
     @Override
     public void send(byte[] signal) {
-        if(connectThread == null) {
-            Log.e(TAG, "not connected");
-            return;
-        }
-        if(!connectThread.isConnected()) {
-            Log.e(TAG, "not connected");
+        if(connectThread == null || !connectThread.isConnected()) {
+            showToast(R.string.not_connected);
             return;
         }
         try {
@@ -140,5 +141,9 @@ public class BluetoothDevice implements Device, BluetoothCommunicationThread.Lis
                 name.equals(that.name) &&
                 port == that.port &&
                 connectionType == that.connectionType;
+    }
+
+    private void showToast(int resId) {
+        Toast.makeText(App.ContextProvider.getContext(), resId, Toast.LENGTH_SHORT).show();
     }
 }

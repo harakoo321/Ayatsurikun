@@ -5,4 +5,12 @@
     <string name="dialog_msg">信号を受信しました。ボタンを追加するにはボタンの名前を設定してください。</string>
     <string name="dialog_btn_ok">追加</string>
     <string name="dialog_btn_ng">キャンセル</string>
+    <string name="connected">接続完了</string>
+    <string name="connection_failed">接続に失敗しました</string>
+    <string name="disconnected">接続が切断されました</string>
+    <string name="not_connected">接続されていません</string>
+    <string name="not_found">デバイスが見つかりません</string>
+    <string name="driver_not_found">ドライバーが見つかりません</string>
+    <string name="port_not_found">ポートが見つかりません</string>
+    <string name="permission_denied">権限がありません</string>
 </resources>
