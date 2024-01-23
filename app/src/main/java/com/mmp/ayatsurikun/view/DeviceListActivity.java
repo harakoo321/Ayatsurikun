@@ -16,13 +16,12 @@ import android.os.Bundle;
 
 import com.mmp.ayatsurikun.App;
 import com.mmp.ayatsurikun.R;
-import com.mmp.ayatsurikun.databinding.ActivityMainBinding;
+import com.mmp.ayatsurikun.databinding.ActivityDeviceListBinding;
 import com.mmp.ayatsurikun.viewmodel.DeviceListViewModel;
 
 //@AndroidEntryPoint
 public class DeviceListActivity extends AppCompatActivity {
 
-    private DeviceAdapter deviceAdapter;
     private DeviceListViewModel deviceListViewModel;
 
     private final ActivityResultLauncher<String> requestPermissionLauncher =
@@ -31,7 +30,7 @@ public class DeviceListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        ActivityDeviceListBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_device_list);
         DeviceListViewModel.Factory factory = new DeviceListViewModel.Factory();
         deviceListViewModel = new ViewModelProvider(this, factory).get(DeviceListViewModel.class);
         binding.setViewModel(deviceListViewModel);
@@ -40,7 +39,7 @@ public class DeviceListActivity extends AppCompatActivity {
         deviceListViewModel.clearSelectedDevice();
         deviceListViewModel.getSelectedDevice().observe(this, device -> {
             ((App)getApplication()).setDevice(device);
-            SignalButtonsActivity.start(this);
+            DeviceControlActivity.start(this);
         });
     }
 
@@ -61,8 +60,8 @@ public class DeviceListActivity extends AppCompatActivity {
     private void setupViews() {
         RecyclerView recyclerView = findViewById(R.id.recycler_dev);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        deviceAdapter = new DeviceAdapter(deviceListViewModel);
+        DeviceAdapter deviceAdapter = new DeviceAdapter(deviceListViewModel);
         recyclerView.setAdapter(deviceAdapter);
-        deviceListViewModel.getDevices().observe(this, devices -> deviceAdapter.submitList(devices));
+        deviceListViewModel.getDevices().observe(this, deviceAdapter::submitList);
     }
 }

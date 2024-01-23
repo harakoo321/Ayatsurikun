@@ -16,7 +16,7 @@
         android:theme="@style/Theme.Ayatsurikun"
         tools:targetApi="31">
         <activity
-            android:name=".view.SignalButtonsActivity"
+            android:name=".view.DeviceControlActivity"
             android:exported="false" />
         <activity
             android:name=".view.DeviceListActivity"

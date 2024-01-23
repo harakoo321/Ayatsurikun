@@ -5,7 +5,7 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-import java.util.UUID;
+import java.util.Arrays;
 
 @Entity(tableName = "signals")
 public class Signal {
@@ -22,10 +22,15 @@ public class Signal {
     @ColumnInfo(name = "signal")
     private final byte[] signal;
 
-    public Signal(@NonNull String name, @NonNull byte[] signal) {
-        this.id = UUID.randomUUID().toString();
+    public Signal(@NonNull String id, @NonNull String name, @NonNull byte[] signal) {
+        this.id = id;
         this.name = name;
         this.signal = signal;
+    }
+
+    @NonNull
+    public String getId() {
+        return id;
     }
 
     @NonNull
@@ -35,5 +40,15 @@ public class Signal {
 
     public byte[] getSignal() {
         return signal;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Signal)) return false;
+        Signal signal = (Signal) o;
+        return this.id.equals(signal.id) &&
+                this.name.equals(signal.name) &&
+                Arrays.equals(this.signal, signal.getSignal());
     }
 }

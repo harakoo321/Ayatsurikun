@@ -5,39 +5,40 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.mmp.ayatsurikun.contract.SignalButtonsContract;
 import com.mmp.ayatsurikun.model.Device;
+import com.mmp.ayatsurikun.model.Signal;
 import com.mmp.ayatsurikun.usecase.ConnectionUseCase;
 import com.mmp.ayatsurikun.usecase.ConnectionUseCaseImpl;
+import com.mmp.ayatsurikun.usecase.SignalUseCase;
+import com.mmp.ayatsurikun.usecase.SignalUseCaseImpl;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
-public class SignalButtonsViewModel extends ViewModel {
-    private final Device device;
+public class DeviceControlViewModel extends ViewModel {
     private final ConnectionUseCase connectionUseCase;
-    private final Map<String, byte[]> signalHashMap = new HashMap<>();
-    private byte[] signal;
-    public SignalButtonsViewModel(Device device) {
-        this.device = device;
+    private final SignalUseCase signalUseCase;
+    private final LiveData<byte[]> signal;
+    public DeviceControlViewModel(Device device) {
+        this.signal = device.getSignal();
         connectionUseCase = new ConnectionUseCaseImpl(device);
+        signalUseCase = new SignalUseCaseImpl();
     }
 
     public LiveData<byte[]> getSignal() {
-        return device.getSignal();
+        return signal;
     }
 
-    public void setSignal(byte[] signal) {
-        this.signal = signal;
+    public void addSignal(String text, byte[] signal) {
+        signalUseCase.addSignal(text, signal);
+        connectionUseCase.clear();
     }
 
-    public void setButtonText(String text, SignalButtonsContract contract) {
-        contract.addButton(text);
-        signalHashMap.put(text, signal);
+    public void cancel() {
+        connectionUseCase.clear();
     }
 
-    public void onSignalButtonClick(String text) {
-        device.send(signalHashMap.get(text));
+    public LiveData<List<Signal>> getAllSignals() {
+        return signalUseCase.getAllSignals();
     }
 
     public void connect() {
@@ -46,6 +47,14 @@ public class SignalButtonsViewModel extends ViewModel {
 
     public void disconnect() {
         connectionUseCase.disconnect();
+    }
+
+    public void onItemClick(Signal signal) {
+        connectionUseCase.send(signal.getSignal());
+    }
+
+    public void onItemLongClick(Signal signal) {
+        signalUseCase.deleteSignal(signal);
     }
 
     public static class Factory extends ViewModelProvider.NewInstanceFactory {
@@ -58,7 +67,7 @@ public class SignalButtonsViewModel extends ViewModel {
         @NonNull
         @Override
         public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-            return (T) new SignalButtonsViewModel(device);
+            return (T) new DeviceControlViewModel(device);
         }
     }
 }

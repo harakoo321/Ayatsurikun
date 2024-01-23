@@ -6,17 +6,20 @@ import com.mmp.ayatsurikun.db.SqliteDatabase;
 import com.mmp.ayatsurikun.model.Signal;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class SignalRepositoryImpl implements SignalRepository {
-    SqliteDatabase db;
-    SignalDao signalDao;
+    private final SignalDao signalDao;
+    private final ExecutorService exec = Executors.newCachedThreadPool();
+
     public SignalRepositoryImpl() {
-        db = SqliteDatabase.getInstance();
+        SqliteDatabase db = SqliteDatabase.getInstance();
         signalDao = db.signalDao();
     }
 
     public void create(Signal signal) {
-        signalDao.insert(signal);
+        exec.execute(() -> signalDao.insert(signal));
     }
 
     public void delete(Signal signal) {

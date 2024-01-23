@@ -70,6 +70,11 @@ public class BluetoothDevice implements Device, BluetoothCommunicationThread.Lis
     }
 
     @Override
+    public void clearSignal() {
+        signal.postValue(null);
+    }
+
+    @Override
     public void connect() {
         android.bluetooth.BluetoothDevice device = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(id);
         if (device == null) {

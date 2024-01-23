@@ -16,4 +16,14 @@ public class ConnectionUseCaseImpl implements ConnectionUseCase{
     public void disconnect() {
         device.disconnect();
     }
+
+    @Override
+    public void send(byte[] signal) {
+        device.send(signal);
+    }
+
+    @Override
+    public void clear() {
+        device.clearSignal();
+    }
 }

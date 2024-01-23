@@ -7,6 +7,7 @@ import com.mmp.ayatsurikun.repository.SignalRepository;
 import com.mmp.ayatsurikun.repository.SignalRepositoryImpl;
 
 import java.util.List;
+import java.util.UUID;
 
 public class SignalUseCaseImpl implements SignalUseCase {
     private final SignalRepository signalRepository;
@@ -22,7 +23,7 @@ public class SignalUseCaseImpl implements SignalUseCase {
 
     @Override
     public void addSignal(String name, byte[] signal) {
-        signalRepository.create(new Signal(name, signal));
+        signalRepository.create(new Signal(UUID.randomUUID().toString(), name, signal));
     }
 
     @Override

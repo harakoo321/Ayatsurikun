@@ -88,6 +88,11 @@ public class UsbDevice implements Device, SerialInputOutputManager.Listener {
     }
 
     @Override
+    public void clearSignal() {
+        signal.postValue(null);
+    }
+
+    @Override
     public void onNewData(byte[] data) {
         mainLooper.post(() -> receive(data));
     }
@@ -215,8 +220,6 @@ public class UsbDevice implements Device, SerialInputOutputManager.Listener {
             onRunError(e);
         }
     }
-
-
 
     private void receive(byte[] data) {
         if (this.data == null) this.data = data;

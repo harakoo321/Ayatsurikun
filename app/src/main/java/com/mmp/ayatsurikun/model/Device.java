@@ -9,6 +9,7 @@ public interface Device {
     String getName();
     ConnectionType getConnectionType();
     LiveData<byte[]> getSignal();
+    void clearSignal();
     void connect();
     void disconnect();
     void send(byte[] signal);
