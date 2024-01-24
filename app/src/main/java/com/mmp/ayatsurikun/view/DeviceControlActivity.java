@@ -10,12 +10,14 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.mmp.ayatsurikun.App;
 import com.mmp.ayatsurikun.R;
 import com.mmp.ayatsurikun.databinding.ActivityDeviceControlBinding;
 import com.mmp.ayatsurikun.model.Signal;
 import com.mmp.ayatsurikun.viewmodel.DeviceControlViewModel;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class DeviceControlActivity extends AppCompatActivity {
     private DeviceControlViewModel viewModel;
     private AddSignalDialogFragment addDialogFragment;
@@ -30,10 +32,7 @@ public class DeviceControlActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActivityDeviceControlBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_device_control);
-        DeviceControlViewModel.Factory factory = new DeviceControlViewModel.Factory(
-                ((App)getApplication()).getDevice()
-        );
-        viewModel = new ViewModelProvider(this, factory).get(DeviceControlViewModel.class);
+        viewModel = new ViewModelProvider(this).get(DeviceControlViewModel.class);
         binding.setViewModel(viewModel);
         binding.setLifecycleOwner(this);
         viewModel.connect();

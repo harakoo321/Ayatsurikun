@@ -4,16 +4,18 @@ import androidx.lifecycle.LiveData;
 
 import com.mmp.ayatsurikun.model.Signal;
 import com.mmp.ayatsurikun.repository.SignalRepository;
-import com.mmp.ayatsurikun.repository.SignalRepositoryImpl;
 
 import java.util.List;
 import java.util.UUID;
 
+import javax.inject.Inject;
+
 public class SignalUseCaseImpl implements SignalUseCase {
     private final SignalRepository signalRepository;
 
-    public SignalUseCaseImpl() {
-        signalRepository = new SignalRepositoryImpl();
+    @Inject
+    public SignalUseCaseImpl(SignalRepository signalRepository) {
+        this.signalRepository = signalRepository;
     }
 
     @Override

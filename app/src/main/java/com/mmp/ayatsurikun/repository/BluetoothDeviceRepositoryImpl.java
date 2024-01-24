@@ -16,7 +16,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 public class BluetoothDeviceRepositoryImpl implements DeviceRepository {
+    @Inject
+    public BluetoothDeviceRepositoryImpl() {}
+
     @Override
     public List<Device> scanDevices() {
         List<Device> deviceItems = new ArrayList<>();

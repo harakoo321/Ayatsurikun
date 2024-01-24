@@ -19,9 +19,10 @@ import com.mmp.ayatsurikun.R;
 import com.mmp.ayatsurikun.databinding.ActivityDeviceListBinding;
 import com.mmp.ayatsurikun.viewmodel.DeviceListViewModel;
 
-//@AndroidEntryPoint
-public class DeviceListActivity extends AppCompatActivity {
+import dagger.hilt.android.AndroidEntryPoint;
 
+@AndroidEntryPoint
+public class DeviceListActivity extends AppCompatActivity {
     private DeviceListViewModel deviceListViewModel;
 
     private final ActivityResultLauncher<String> requestPermissionLauncher =
@@ -31,8 +32,7 @@ public class DeviceListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActivityDeviceListBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_device_list);
-        DeviceListViewModel.Factory factory = new DeviceListViewModel.Factory();
-        deviceListViewModel = new ViewModelProvider(this, factory).get(DeviceListViewModel.class);
+        deviceListViewModel = new ViewModelProvider(this).get(DeviceListViewModel.class);
         binding.setViewModel(deviceListViewModel);
         checkPermission();
         setupViews();

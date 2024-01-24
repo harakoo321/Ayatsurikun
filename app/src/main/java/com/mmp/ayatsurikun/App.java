@@ -5,7 +5,9 @@ import android.content.Context;
 
 import com.mmp.ayatsurikun.model.Device;
 
-//@HiltAndroidApp
+import dagger.hilt.android.HiltAndroidApp;
+
+@HiltAndroidApp
 public class App extends Application {
     private Device device;
     @Override

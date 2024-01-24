@@ -2,20 +2,21 @@ package com.mmp.ayatsurikun.repository;
 
 import androidx.lifecycle.LiveData;
 import com.mmp.ayatsurikun.db.SignalDao;
-import com.mmp.ayatsurikun.db.SqliteDatabase;
 import com.mmp.ayatsurikun.model.Signal;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import javax.inject.Inject;
+
 public class SignalRepositoryImpl implements SignalRepository {
     private final SignalDao signalDao;
     private final ExecutorService exec = Executors.newCachedThreadPool();
 
-    public SignalRepositoryImpl() {
-        SqliteDatabase db = SqliteDatabase.getInstance();
-        signalDao = db.signalDao();
+    @Inject
+    public SignalRepositoryImpl(SignalDao signalDao) {
+        this.signalDao = signalDao;
     }
 
     public void create(Signal signal) {

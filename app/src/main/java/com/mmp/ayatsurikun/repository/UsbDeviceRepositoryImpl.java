@@ -14,7 +14,12 @@ import com.mmp.ayatsurikun.model.Device;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 public class UsbDeviceRepositoryImpl implements DeviceRepository {
+    @Inject
+    public UsbDeviceRepositoryImpl() {}
+
     @Override
     public List<Device> scanDevices() {
         List<Device> deviceItems = new ArrayList<>();
