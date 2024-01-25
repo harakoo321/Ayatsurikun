@@ -53,4 +53,8 @@ public abstract class ViewModelComponentModule {
     @Binds
     @ViewModelScoped
     public abstract SignalRepository bindSignalRepository(SignalRepositoryImpl signalRepositoryImpl);
+
+    @Binds
+    @ViewModelScoped
+    public abstract SignalRepository bindScheduleRepository(SignalRepositoryImpl signalRepositoryImpl);
 }

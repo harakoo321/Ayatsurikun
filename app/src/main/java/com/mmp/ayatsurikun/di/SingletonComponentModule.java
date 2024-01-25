@@ -4,6 +4,7 @@ import android.content.Context;
 
 import androidx.room.Room;
 
+import com.mmp.ayatsurikun.db.ScheduleDao;
 import com.mmp.ayatsurikun.db.SignalDao;
 import com.mmp.ayatsurikun.db.SqliteDatabase;
 
@@ -32,5 +33,11 @@ public abstract class SingletonComponentModule {
     @Singleton
     public static SignalDao provideSignalDao(SqliteDatabase db) {
         return db.signalDao();
+    }
+
+    @Provides
+    @Singleton
+    public static ScheduleDao provideScheduleDao(SqliteDatabase db) {
+        return db.scheduleDao();
     }
 }

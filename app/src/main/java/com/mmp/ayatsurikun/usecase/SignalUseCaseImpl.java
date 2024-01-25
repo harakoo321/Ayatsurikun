@@ -6,7 +6,6 @@ import com.mmp.ayatsurikun.model.Signal;
 import com.mmp.ayatsurikun.repository.SignalRepository;
 
 import java.util.List;
-import java.util.UUID;
 
 import javax.inject.Inject;
 
@@ -25,7 +24,7 @@ public class SignalUseCaseImpl implements SignalUseCase {
 
     @Override
     public void addSignal(String name, byte[] signal) {
-        signalRepository.create(new Signal(UUID.randomUUID().toString(), name, signal));
+        signalRepository.create(new Signal(0, name, signal));
     }
 
     @Override

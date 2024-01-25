@@ -10,9 +10,8 @@ import java.util.Arrays;
 @Entity(tableName = "signals")
 public class Signal {
     @PrimaryKey
-    @NonNull
     @ColumnInfo(name = "id")
-    private final String id;
+    private final int id;
 
     @NonNull
     @ColumnInfo(name = "name")
@@ -22,14 +21,13 @@ public class Signal {
     @ColumnInfo(name = "signal")
     private final byte[] signal;
 
-    public Signal(@NonNull String id, @NonNull String name, @NonNull byte[] signal) {
+    public Signal(int id, @NonNull String name, @NonNull byte[] signal) {
         this.id = id;
         this.name = name;
         this.signal = signal;
     }
 
-    @NonNull
-    public String getId() {
+    public int getId() {
         return id;
     }
 
@@ -47,7 +45,7 @@ public class Signal {
         if (this == o) return true;
         if (!(o instanceof Signal)) return false;
         Signal signal = (Signal) o;
-        return this.id.equals(signal.id) &&
+        return this.id == signal.id &&
                 this.name.equals(signal.name) &&
                 Arrays.equals(this.signal, signal.getSignal());
     }

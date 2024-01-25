@@ -19,7 +19,7 @@ public class SignalAdapter extends ListAdapter<Signal, SignalAdapter.SignalViewH
         super(new DiffUtil.ItemCallback<Signal>() {
             @Override
             public boolean areItemsTheSame(@NonNull Signal oldItem, @NonNull Signal newItem) {
-                return oldItem.getId().equals(newItem.getId());
+                return oldItem.getId() == newItem.getId();
             }
 
             @Override
