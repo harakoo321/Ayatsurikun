@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface ScanDevicesUseCase {
     List<Device> scanAllDevices();
+    Device scanDevice(String id);
 }

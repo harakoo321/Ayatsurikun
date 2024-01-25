@@ -25,7 +25,7 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
     }
 
     @Override
-    public LiveData<Schedule> findById(int id) {
+    public Schedule findById(int id) {
         return scheduleDao.findById(id);
     }
 

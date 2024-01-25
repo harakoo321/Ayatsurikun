@@ -27,4 +27,12 @@ public class ScanDevicesUseCaseImpl implements ScanDevicesUseCase {
         }
         return deviceItems;
     }
+
+    @Override
+    public Device scanDevice(String id) {
+        for (Device device : scanAllDevices()) {
+            if(device.getId().equals(id)) return device;
+        }
+        return null;
+    }
 }

@@ -10,15 +10,17 @@ import javax.inject.Inject;
 import dagger.hilt.android.qualifiers.ApplicationContext;
 
 public class ConnectionUseCaseImpl implements ConnectionUseCase{
-    private final Device device;
+    private final Context context;
+    private Device device;
 
     @Inject
     public ConnectionUseCaseImpl(@ApplicationContext Context context) {
-        this.device = ((App)context).getDevice();
+        this.context = context;
     }
 
     @Override
     public void connect() {
+        device = ((App)context).getDevice();
         device.connect();
     }
 

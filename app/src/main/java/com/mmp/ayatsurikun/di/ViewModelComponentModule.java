@@ -9,6 +9,7 @@ import com.mmp.ayatsurikun.usecase.ConnectionUseCase;
 import com.mmp.ayatsurikun.usecase.ConnectionUseCaseImpl;
 import com.mmp.ayatsurikun.usecase.ScanDevicesUseCase;
 import com.mmp.ayatsurikun.usecase.ScanDevicesUseCaseImpl;
+import com.mmp.ayatsurikun.usecase.ScheduleUseCase;
 import com.mmp.ayatsurikun.usecase.SignalUseCase;
 import com.mmp.ayatsurikun.usecase.SignalUseCaseImpl;
 
@@ -53,6 +54,10 @@ public abstract class ViewModelComponentModule {
     @Binds
     @ViewModelScoped
     public abstract SignalRepository bindSignalRepository(SignalRepositoryImpl signalRepositoryImpl);
+
+    @Binds
+    @ViewModelScoped
+    public abstract ScheduleUseCase bindScheduleUseCase(SignalUseCaseImpl signalUseCaseImpl);
 
     @Binds
     @ViewModelScoped

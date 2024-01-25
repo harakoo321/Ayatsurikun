@@ -3,12 +3,12 @@ package com.mmp.ayatsurikun.repository;
 import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
 
-import com.mmp.ayatsurikun.App;
 import com.mmp.ayatsurikun.util.ConnectionType;
 import com.mmp.ayatsurikun.model.Device;
 
@@ -18,9 +18,14 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import dagger.hilt.android.qualifiers.ApplicationContext;
+
 public class BluetoothDeviceRepositoryImpl implements DeviceRepository {
+    private final Context context;
     @Inject
-    public BluetoothDeviceRepositoryImpl() {}
+    public BluetoothDeviceRepositoryImpl(@ApplicationContext Context context) {
+        this.context = context;
+    }
 
     @Override
     public List<Device> scanDevices() {
@@ -32,7 +37,7 @@ public class BluetoothDeviceRepositoryImpl implements DeviceRepository {
         }
 
         if (ActivityCompat.checkSelfPermission(
-                App.ContextProvider.getContext(),
+                context,
                 Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
             Log.i("Bluetooth", "Permission denied!");
             return null;

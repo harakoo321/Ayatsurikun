@@ -83,6 +83,11 @@ public class BluetoothDevice implements Device, BluetoothCommunicationThread.Lis
         }
         connectThread = new BluetoothConnectThread(device, callback);
         connectThread.start();
+        try {
+            connectThread.join();
+        } catch (InterruptedException e) {
+            showToast(R.string.connection_failed);
+        }
     }
 
     @Override

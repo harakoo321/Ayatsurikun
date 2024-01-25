@@ -16,4 +16,5 @@
     <string name="confirm">確認</string>
     <string name="delete_confirm">を削除しますか？</string>
     <string name="delete">削除</string>
+    <string name="schedule_not_found">スケジュールが見つかりませんでした</string>
 </resources>

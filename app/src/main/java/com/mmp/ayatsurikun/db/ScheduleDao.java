@@ -18,7 +18,7 @@ public interface ScheduleDao {
     LiveData<List<Schedule>> findAll();
 
     @Query("SELECT * FROM schedules WHERE id = :id")
-    LiveData<Schedule> findById(int id);
+    Schedule findById(int id);
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     long insert(Schedule schedule);

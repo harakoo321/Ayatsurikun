@@ -50,12 +50,6 @@ public class DeviceControlActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        viewModel.getAllSignals();
-    }
-
-    @Override
     public void onPause() {
         if (addDialogFragment != null && addDialogFragment.isAdded()) {
             addDialogFragment.dismiss();
