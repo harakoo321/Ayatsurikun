@@ -6,8 +6,6 @@ import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 
-import java.time.LocalDateTime;
-
 @Entity(tableName = "schedules",
         foreignKeys = @ForeignKey(
                 entity = Signal.class,
@@ -27,15 +25,14 @@ public class Schedule {
     @ColumnInfo(name = "signal_id")
     private final int signalId;
 
-    @NonNull
     @ColumnInfo(name = "time")
-    private final LocalDateTime time;
+    private final long dateTime;
 
-    public Schedule(int id, @NonNull String deviceId, int signalId, @NonNull LocalDateTime time) {
+    public Schedule(int id, @NonNull String deviceId, int signalId, long dateTime) {
         this.id = id;
         this.deviceId = deviceId;
         this.signalId = signalId;
-        this.time = time;
+        this.dateTime = dateTime;
     }
 
     public int getId() {
@@ -51,8 +48,18 @@ public class Schedule {
         return signalId;
     }
 
-    @NonNull
-    public LocalDateTime getTime() {
-        return time;
+    public long getDateTime() {
+        return dateTime;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) return true;
+        if (!(o instanceof Schedule)) return false;
+        Schedule other = (Schedule)o;
+        return id == other.id &&
+                deviceId.equals(other.deviceId) &&
+                signalId == other.signalId &&
+                dateTime == other.dateTime;
     }
 }

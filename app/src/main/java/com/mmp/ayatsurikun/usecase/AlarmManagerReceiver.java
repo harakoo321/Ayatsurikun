@@ -13,6 +13,9 @@ import com.mmp.ayatsurikun.model.Signal;
 
 import javax.inject.Inject;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class AlarmManagerReceiver extends BroadcastReceiver {
     private final ScanDevicesUseCase scanDevicesUseCase;
     private final ConnectionUseCase connectionUseCase;
@@ -44,7 +47,7 @@ public class AlarmManagerReceiver extends BroadcastReceiver {
         }
         ((App)context.getApplicationContext()).setDevice(device);
         connectionUseCase.connect();
-        Signal signal = signalUseCase.getSignalById(schedule.getSignalId());
+        Signal signal = signalUseCase.getSignalById(schedule.getId());
         if(signal != null) {
             connectionUseCase.send(signal.getSignal());
         }

@@ -3,6 +3,7 @@ package com.mmp.ayatsurikun.usecase;
 import androidx.lifecycle.LiveData;
 
 import com.mmp.ayatsurikun.model.Signal;
+import com.mmp.ayatsurikun.model.SignalWithSchedules;
 import com.mmp.ayatsurikun.repository.SignalRepository;
 
 import java.util.List;
@@ -36,8 +37,9 @@ public class SignalUseCaseImpl implements SignalUseCase {
 
     @Override
     public void deleteSignal(Signal signal) {
-        signalRepository.findSignalWithSchedulesById(signal.getId()).schedules
-                .forEach(scheduleUseCase::cancelSchedule);
+        SignalWithSchedules signalWithSchedules = signalRepository.findSignalWithSchedulesById(signal.getId());
+        if (signalWithSchedules == null) return;
+        signalWithSchedules.schedules.forEach(scheduleUseCase::cancelSchedule);
         signalRepository.delete(signal);
     }
 }

@@ -6,9 +6,11 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Transaction;
 import androidx.room.Update;
 
 import com.mmp.ayatsurikun.model.Schedule;
+import com.mmp.ayatsurikun.model.ScheduleAndSignal;
 
 import java.util.List;
 
@@ -28,4 +30,13 @@ public interface ScheduleDao {
 
     @Delete
     void delete(Schedule schedule);
+
+    @Transaction
+    @Query("SELECT * FROM schedules WHERE id = :scheduleId")
+    ScheduleAndSignal findScheduleAndSignalById(int scheduleId);
+
+    @Transaction
+    @Query("SELECT * FROM schedules")
+    List<ScheduleAndSignal> findAllScheduleAndSignal();
+
 }

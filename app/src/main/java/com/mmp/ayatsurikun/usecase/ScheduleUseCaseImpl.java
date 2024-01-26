@@ -9,10 +9,9 @@ import android.os.Build;
 import androidx.lifecycle.LiveData;
 
 import com.mmp.ayatsurikun.model.Schedule;
+import com.mmp.ayatsurikun.model.Signal;
 import com.mmp.ayatsurikun.repository.ScheduleRepository;
 
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -42,15 +41,15 @@ public class ScheduleUseCaseImpl implements ScheduleUseCase {
     }
 
     @Override
-    public void addSchedule(String deviceId, int signalId, LocalDateTime time) {
+    public void addSchedule(String deviceId, Signal signal, long dateTime) {
         try {
-            int id = scheduleRepository.insert(new Schedule(0, deviceId, signalId, time));
+            int id = scheduleRepository.insert(new Schedule(0, deviceId, signal.getId(), dateTime));
             AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
             PendingIntent pendingIntent = createPendingIntent(id);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
-                alarmManager.setAndAllowWhileIdle(AlarmManager.RTC, time.toEpochSecond(ZoneOffset.ofHours(+9)), pendingIntent);
+                alarmManager.setAndAllowWhileIdle(AlarmManager.RTC, dateTime, pendingIntent);
             } else {
-                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC, time.toEpochSecond(ZoneOffset.ofHours(+9)), pendingIntent);
+                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC, dateTime, pendingIntent);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -58,14 +57,14 @@ public class ScheduleUseCaseImpl implements ScheduleUseCase {
     }
 
     @Override
-    public void updateSchedule(int id, String deviceId, int signalId, LocalDateTime time) {
-        scheduleRepository.update(new Schedule(id, deviceId, signalId, time));
+    public void updateSchedule(int id, String deviceId, Signal signal, long dateTime) {
+        scheduleRepository.update(new Schedule(id, deviceId, signal.getId(), dateTime));
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         PendingIntent pendingIntent = createPendingIntent(id);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !alarmManager.canScheduleExactAlarms()) {
-            alarmManager.setAndAllowWhileIdle(AlarmManager.RTC, time.toEpochSecond(ZoneOffset.ofHours(+9)), pendingIntent);
+            alarmManager.setAndAllowWhileIdle(AlarmManager.RTC, dateTime, pendingIntent);
         } else {
-            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC, time.toEpochSecond(ZoneOffset.ofHours(+9)), pendingIntent);
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC, dateTime, pendingIntent);
         }
     }
 

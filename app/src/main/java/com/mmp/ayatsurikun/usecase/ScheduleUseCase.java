@@ -3,15 +3,18 @@ package com.mmp.ayatsurikun.usecase;
 import androidx.lifecycle.LiveData;
 
 import com.mmp.ayatsurikun.model.Schedule;
+import com.mmp.ayatsurikun.model.Signal;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ScheduleUseCase {
     LiveData<List<Schedule>> findAll();
     Schedule findById(int id);
-    void addSchedule(String deviceId, int signalId, LocalDateTime time);
-    void updateSchedule(int id, String deviceId, int signalId, LocalDateTime time);
+
+    void addSchedule(String deviceId, Signal signal, long dateTime);
+
+    void updateSchedule(int id, String deviceId, Signal signal, long dateTime);
+
     void cancelSchedule(Schedule schedule);
     void deleteSchedule(Schedule schedule);
 }

@@ -42,6 +42,11 @@ public class SignalRepositoryImpl implements SignalRepository {
 
     @Override
     public SignalWithSchedules findSignalWithSchedulesById(int signalId) {
-        return signalDao.findSignalWithSchedulesById(signalId);
+        try {
+            return exec.submit(() -> signalDao.findSignalWithSchedulesById(signalId)).get();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

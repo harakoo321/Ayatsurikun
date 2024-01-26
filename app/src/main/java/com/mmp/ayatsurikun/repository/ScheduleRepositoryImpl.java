@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData;
 
 import com.mmp.ayatsurikun.db.ScheduleDao;
 import com.mmp.ayatsurikun.model.Schedule;
+import com.mmp.ayatsurikun.model.ScheduleAndSignal;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -42,5 +43,25 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
     @Override
     public void delete(Schedule schedule) {
         exec.execute(() -> scheduleDao.delete(schedule));
+    }
+
+    @Override
+    public ScheduleAndSignal findScheduleAndSignalById(int scheduleId) {
+        try {
+            return exec.submit(() -> scheduleDao.findScheduleAndSignalById(scheduleId)).get();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public List<ScheduleAndSignal> findAllScheduleAndSignal() {
+        try {
+            return exec.submit(scheduleDao::findAllScheduleAndSignal).get();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
