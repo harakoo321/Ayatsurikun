@@ -9,6 +9,7 @@ import android.os.Build;
 import androidx.lifecycle.LiveData;
 
 import com.mmp.ayatsurikun.model.Schedule;
+import com.mmp.ayatsurikun.model.ScheduleAndSignal;
 import com.mmp.ayatsurikun.model.Signal;
 import com.mmp.ayatsurikun.repository.ScheduleRepository;
 
@@ -38,6 +39,11 @@ public class ScheduleUseCaseImpl implements ScheduleUseCase {
     @Override
     public Schedule findById(int id) {
         return scheduleRepository.findById(id);
+    }
+
+    @Override
+    public LiveData<List<ScheduleAndSignal>> findAllScheduleAndSignal() {
+        return scheduleRepository.findAllScheduleAndSignal();
     }
 
     @Override

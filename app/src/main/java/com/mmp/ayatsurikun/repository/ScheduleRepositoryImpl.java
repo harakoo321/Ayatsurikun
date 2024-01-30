@@ -56,12 +56,7 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
     }
 
     @Override
-    public List<ScheduleAndSignal> findAllScheduleAndSignal() {
-        try {
-            return exec.submit(scheduleDao::findAllScheduleAndSignal).get();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+    public LiveData<List<ScheduleAndSignal>> findAllScheduleAndSignal() {
+        return scheduleDao.findAllScheduleAndSignal();
     }
 }

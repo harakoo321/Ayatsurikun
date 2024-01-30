@@ -37,6 +37,6 @@ public interface ScheduleDao {
 
     @Transaction
     @Query("SELECT * FROM schedules")
-    List<ScheduleAndSignal> findAllScheduleAndSignal();
+    LiveData<List<ScheduleAndSignal>> findAllScheduleAndSignal();
 
 }

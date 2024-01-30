@@ -6,6 +6,8 @@ import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 
+import java.util.Calendar;
+
 @Entity(tableName = "schedules",
         foreignKeys = @ForeignKey(
                 entity = Signal.class,
@@ -50,6 +52,12 @@ public class Schedule {
 
     public long getDateTime() {
         return dateTime;
+    }
+
+    public String getDateTimeString() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(dateTime);
+        return calendar.toString();
     }
 
     @Override

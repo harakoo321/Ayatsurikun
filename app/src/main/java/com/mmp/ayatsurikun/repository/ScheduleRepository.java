@@ -20,5 +20,5 @@ public interface ScheduleRepository {
 
     ScheduleAndSignal findScheduleAndSignalById(int scheduleId);
 
-    List<ScheduleAndSignal> findAllScheduleAndSignal();
+    LiveData<List<ScheduleAndSignal>> findAllScheduleAndSignal();
 }
