@@ -15,22 +15,6 @@
         android:orientation="vertical"
         tools:context=".view.ScheduleListFragment">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/schedule_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?attr/colorPrimary">
-
-            <TextView
-                android:id="@+id/schedule_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/schedule_title"
-                android:textColor="@android:color/white"
-                android:textSize="20sp"
-                android:textStyle="normal" />
-        </androidx.appcompat.widget.Toolbar>
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_schedule"
             android:name="com.mmp.ayatsurikun.view.ScheduleFragment"
@@ -41,5 +25,6 @@
             app:layoutManager="LinearLayoutManager"
             tools:context=".view.ScheduleListFragment"
             tools:listitem="@layout/schedule_item" />
+
     </LinearLayout>
 </layout>

@@ -32,18 +32,13 @@ public class ScheduleUseCaseImpl implements ScheduleUseCase {
     }
 
     @Override
-    public LiveData<List<Schedule>> findAll() {
-        return scheduleRepository.findAll();
-    }
-
-    @Override
-    public Schedule findById(int id) {
-        return scheduleRepository.findById(id);
-    }
-
-    @Override
     public LiveData<List<ScheduleAndSignal>> findAllScheduleAndSignal() {
         return scheduleRepository.findAllScheduleAndSignal();
+    }
+
+    @Override
+    public ScheduleAndSignal findScheduleAndSignalById(int scheduleId) {
+        return scheduleRepository.findScheduleAndSignalById(scheduleId);
     }
 
     @Override

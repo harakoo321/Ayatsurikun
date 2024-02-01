@@ -14,7 +14,7 @@ public interface SignalRepository {
 
     LiveData<List<Signal>> findAll();
 
-    Signal findById(int id);
+    List<Signal> findAllSync();
 
     SignalWithSchedules findSignalWithSchedulesById(int signalId);
 }

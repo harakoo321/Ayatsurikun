@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface SignalUseCase {
     LiveData<List<Signal>> getAllSignals();
-    Signal getSignalById(int id);
+    List<Signal> getAllSignalsSync();
     void addSignal(String name, byte[] signal);
     void deleteSignal(Signal signal);
 }

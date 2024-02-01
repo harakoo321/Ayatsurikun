@@ -6,7 +6,9 @@ import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 @Entity(tableName = "schedules",
         foreignKeys = @ForeignKey(
@@ -24,7 +26,7 @@ public class Schedule {
     @ColumnInfo(name = "device_id")
     private final String deviceId;
 
-    @ColumnInfo(name = "signal_id")
+    @ColumnInfo(name = "signal_id", index = true)
     private final int signalId;
 
     @ColumnInfo(name = "time")
@@ -55,9 +57,10 @@ public class Schedule {
     }
 
     public String getDateTimeString() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault());
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(dateTime);
-        return calendar.toString();
+        return dateFormat.format(calendar.getTime());
     }
 
     @Override

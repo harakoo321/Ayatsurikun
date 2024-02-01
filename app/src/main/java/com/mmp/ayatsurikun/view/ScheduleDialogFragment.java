@@ -6,6 +6,10 @@ import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -21,6 +25,7 @@ import com.mmp.ayatsurikun.viewmodel.ScheduleListViewModel;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -46,57 +51,61 @@ public class ScheduleDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
         binding = ScheduleDialogBinding.inflate(requireActivity().getLayoutInflater());
-        viewModel = new ViewModelProvider(requireParentFragment()).get(ScheduleListViewModel.class);
+        viewModel = new ViewModelProvider(this).get(ScheduleListViewModel.class);
         binding.setViewModel(viewModel);
-        binding.setLifecycleOwner(getViewLifecycleOwner());
+        binding.setLifecycleOwner(this);
         builder.setView(binding.getRoot());
         binding.textDate.setText(dateFormat.format(calendar.getTime()));
         binding.textTime.setText(timeFormat.format(calendar.getTime()));
         calendar.set(Calendar.SECOND, 0);
         binding.dateButton.setOnClickListener(v -> {
-            DialogFragment dialog = new DialogFragment(){
-                @NonNull
-                @Override
-                public Dialog onCreateDialog(Bundle savedInstanceState) {
-                    return new DatePickerDialog(
-                            requireActivity(),
-                            (view, year, month, dayOfMonth) -> {
-                                calendar.set(year, month, dayOfMonth);
-                                binding.textDate.setText(dateFormat.format(calendar.getTime()));
-                            },
-                            calendar.get(Calendar.YEAR),
-                            calendar.get(Calendar.MONTH),
-                            calendar.get(Calendar.DAY_OF_MONTH));
-                }
-            };
-            dialog.show(requireActivity().getSupportFragmentManager(), "DatePicker");
+            DialogFragment dialog = new DatePickerFragment((view, year, month, dayOfMonth) -> {
+                calendar.set(year, month, dayOfMonth);
+                binding.textDate.setText(dateFormat.format(calendar.getTime()));
+            }, calendar);
+            dialog.show(getParentFragmentManager(), "DatePicker");
         });
 
         binding.timeButton.setOnClickListener(v -> {
-            DialogFragment dialog = new DialogFragment(){
-                @NonNull
-                @Override
-                public Dialog onCreateDialog(Bundle savedInstanceState) {
-                    return new TimePickerDialog(
-                            requireActivity(),
-                            (view, hourOfDay, minute) -> {
-                                calendar.set(hourOfDay, minute);
-                                binding.textTime.setText(timeFormat.format(calendar.getTime()));
-                            },
-                            calendar.get(Calendar.HOUR_OF_DAY),
-                            calendar.get(Calendar.MINUTE),
-                            true);
-                }
-            };
-            dialog.show(requireActivity().getSupportFragmentManager(), "TimePicker");
+            DialogFragment dialog = new TimePickerFragment((view, hourOfDay, minute) -> {
+                calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                calendar.set(Calendar.MINUTE, minute);
+                binding.textTime.setText(timeFormat.format(calendar.getTime()));
+            }, calendar);
+            dialog.show(getParentFragmentManager(), "TimePicker");
+        });
+
+        binding.spinner.setAdapter(new ArrayAdapter<Signal>(
+                context,
+                android.R.layout.simple_spinner_item,
+                viewModel.getAllSignalsSync()) {
+            {
+                setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            }
+
+            @NonNull
+            @Override
+            public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+                TextView textView = (TextView)super.getView(position, convertView, parent);
+                textView.setText(Objects.requireNonNull(getItem(position)).getName());
+                return textView;
+            }
+
+            @Override
+            public View getDropDownView(int position, View convertView, @NonNull ViewGroup parent) {
+                TextView textView = (TextView)super.getDropDownView(position, convertView, parent);
+                textView.setText(Objects.requireNonNull(getItem(position)).getName());
+                return textView;
+            }
         });
 
         builder.setPositiveButton(R.string.dialog_btn_ok, (dialog, which) -> {
             Calendar now = Calendar.getInstance();
-            if (calendar.after(now)) {
+            Signal signal = (Signal) binding.spinner.getSelectedItem();
+            if (calendar.after(now) && signal != null) {
                 viewModel.addSchedule(
                         ((App)context).getDevice().getId(),
-                        (Signal) binding.spinner.getSelectedItem(),
+                        signal,
                         calendar.getTimeInMillis()
                 );
             } else {
@@ -106,5 +115,47 @@ public class ScheduleDialogFragment extends DialogFragment {
         });
         builder.setNegativeButton(R.string.dialog_btn_ng, (dialog, which) -> viewModel.clearLongClickedSchedule());
         return builder.create();
+    }
+
+    public static class DatePickerFragment extends DialogFragment {
+        private final DatePickerDialog.OnDateSetListener listener;
+        private final Calendar calendar;
+
+        public DatePickerFragment(DatePickerDialog.OnDateSetListener listener, Calendar calendar) {
+            this.listener = listener;
+            this.calendar = calendar;
+        }
+
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            return new DatePickerDialog(
+                    requireActivity(),
+                    listener,
+                    calendar.get(Calendar.YEAR),
+                    calendar.get(Calendar.MONTH),
+                    calendar.get(Calendar.DAY_OF_MONTH));
+        }
+    }
+
+    public static class TimePickerFragment extends DialogFragment {
+        private final TimePickerDialog.OnTimeSetListener listener;
+        private final Calendar calendar;
+
+        public TimePickerFragment(TimePickerDialog.OnTimeSetListener listener, Calendar calendar) {
+            this.listener = listener;
+            this.calendar = calendar;
+        }
+
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            return new TimePickerDialog(
+                    requireActivity(),
+                    listener,
+                    calendar.get(Calendar.HOUR_OF_DAY),
+                    calendar.get(Calendar.MINUTE),
+                    true);
+        }
     }
 }

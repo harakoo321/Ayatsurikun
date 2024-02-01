@@ -36,8 +36,13 @@ public class SignalRepositoryImpl implements SignalRepository {
     }
 
     @Override
-    public Signal findById(int id) {
-        return signalDao.findById(id);
+    public List<Signal> findAllSync() {
+        try {
+            return exec.submit(signalDao::findAllSync).get();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override

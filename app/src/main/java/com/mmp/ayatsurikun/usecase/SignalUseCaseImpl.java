@@ -26,8 +26,8 @@ public class SignalUseCaseImpl implements SignalUseCase {
     }
 
     @Override
-    public Signal getSignalById(int id) {
-        return signalRepository.findById(id);
+    public List<Signal> getAllSignalsSync() {
+        return signalRepository.findAllSync();
     }
 
     @Override

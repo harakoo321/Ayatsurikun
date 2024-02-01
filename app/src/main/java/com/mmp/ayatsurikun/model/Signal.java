@@ -9,7 +9,7 @@ import java.util.Arrays;
 
 @Entity(tableName = "signals")
 public class Signal {
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     private final int id;
 

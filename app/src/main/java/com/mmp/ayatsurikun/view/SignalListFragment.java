@@ -1,5 +1,6 @@
 package com.mmp.ayatsurikun.view;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
@@ -14,9 +15,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.mmp.ayatsurikun.R;
 import com.mmp.ayatsurikun.databinding.FragmentSignalListBinding;
 import com.mmp.ayatsurikun.model.Signal;
 import com.mmp.ayatsurikun.viewmodel.SignalListViewModel;
+
+import java.util.Objects;
+
+import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -24,11 +30,15 @@ import dagger.hilt.android.AndroidEntryPoint;
 public class SignalListFragment extends Fragment {
     private SignalListViewModel viewModel;
     private DeleteSignalDialogFragment deleteDialogFragment;
+    private FragmentSignalListBinding binding;
+
+    @Inject
+    public SignalListFragment() {
+    }
 
     public static SignalListFragment newInstance() {
         return new SignalListFragment();
     }
-    FragmentSignalListBinding binding;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -43,6 +53,8 @@ public class SignalListFragment extends Fragment {
         viewModel = new ViewModelProvider(this).get(SignalListViewModel.class);
         binding.setViewModel(viewModel);
         binding.setLifecycleOwner(getViewLifecycleOwner());
+        Objects.requireNonNull(((AppCompatActivity) requireActivity()).getSupportActionBar())
+                .setTitle(R.string.signal_title);
         RecyclerView recyclerView = binding.recyclerSchedule;
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         SignalAdapter signalAdapter = new SignalAdapter(viewModel);
@@ -51,7 +63,6 @@ public class SignalListFragment extends Fragment {
         viewModel.getLongClickedSignal().observe(getViewLifecycleOwner(), signal -> {
             if(signal != null) startDeleteSignalDialog(signal);
         });
-        binding.signalToolbar.setNavigationOnClickListener(v -> requireActivity().finish());
     }
 
     @Override

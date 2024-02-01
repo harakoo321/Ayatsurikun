@@ -188,6 +188,14 @@ public class UsbDevice implements Device, SerialInputOutputManager.Listener {
     }
 
     @Override
+    public boolean isConnected() {
+        return connected;
+    }
+
+    @Override
+    public void waitUntilConnected() {}
+
+    @Override
     public void disconnect() {
         if(connected) {
             connected = false;

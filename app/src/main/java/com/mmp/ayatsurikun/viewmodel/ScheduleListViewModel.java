@@ -28,10 +28,6 @@ public class ScheduleListViewModel extends ViewModel {
         this.signalUseCase = signalUseCase;
     }
 
-    public LiveData<List<Schedule>> getAllSchedules() {
-        return scheduleUseCase.findAll();
-    }
-
     public LiveData<List<ScheduleAndSignal>> getAllSchedulesAndSignals() {
         return scheduleUseCase.findAllScheduleAndSignal();
     }
@@ -49,12 +45,8 @@ public class ScheduleListViewModel extends ViewModel {
         scheduleUseCase.deleteSchedule(schedule);
     }
 
-    public LiveData<List<Signal>> getAllSignals() {
-        return signalUseCase.getAllSignals();
-    }
-
-    public Signal getSignalById(int id) {
-        return signalUseCase.getSignalById(id);
+    public List<Signal> getAllSignalsSync() {
+        return signalUseCase.getAllSignalsSync();
     }
 
     public LiveData<Schedule> getLongClickedSchedule() {

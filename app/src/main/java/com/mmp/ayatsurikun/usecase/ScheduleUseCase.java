@@ -9,10 +9,9 @@ import com.mmp.ayatsurikun.model.Signal;
 import java.util.List;
 
 public interface ScheduleUseCase {
-    LiveData<List<Schedule>> findAll();
-    Schedule findById(int id);
-
     LiveData<List<ScheduleAndSignal>> findAllScheduleAndSignal();
+
+    ScheduleAndSignal findScheduleAndSignalById(int scheduleId);
 
     void addSchedule(String deviceId, Signal signal, long dateTime);
 

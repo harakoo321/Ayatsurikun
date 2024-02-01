@@ -8,9 +8,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.mmp.ayatsurikun.App;
 import com.mmp.ayatsurikun.R;
 import com.mmp.ayatsurikun.databinding.ActivityDeviceControlBinding;
 import com.mmp.ayatsurikun.viewmodel.DeviceControlViewModel;
+
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -22,7 +25,8 @@ public class DeviceControlActivity extends AppCompatActivity {
     private DeviceControlViewModel viewModel;
     @Inject
     SignalListFragment signalListFragment;
-
+    @Inject
+    ScheduleListFragment scheduleListFragment;
     private AddSignalDialogFragment addDialogFragment;
 
     public static void start(Context context) {
@@ -37,10 +41,11 @@ public class DeviceControlActivity extends AppCompatActivity {
         viewModel = new ViewModelProvider(this).get(DeviceControlViewModel.class);
         binding.setViewModel(viewModel);
         binding.setLifecycleOwner(this);
-        viewModel.connect();
+        viewModel.connect(((App)getApplicationContext()).getDevice());
         viewModel.getSignal().observe(this, bytes -> {
             if(bytes != null) startAddSignalDialog(bytes);
         });
+        setupToolbar();
         setBottomNavigation();
     }
 
@@ -64,6 +69,12 @@ public class DeviceControlActivity extends AppCompatActivity {
         addDialogFragment.show(getSupportFragmentManager(), "AddButtonDialogFragment");
     }
 
+    private void setupToolbar() {
+        setSupportActionBar(binding.toolbar);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+    }
+
     private void setBottomNavigation() {
         binding.bottomNav.setOnItemSelectedListener(item -> {
             if (item.getItemId() == R.id.bottom_menu_signal) {
@@ -73,7 +84,7 @@ public class DeviceControlActivity extends AppCompatActivity {
                 return true;
             } else if (item.getItemId() == R.id.bottom_menu_schedule) {
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, ScheduleListFragment.newInstance())
+                        .replace(R.id.fragment_container, scheduleListFragment)
                         .commitNow();
                 return true;
             }

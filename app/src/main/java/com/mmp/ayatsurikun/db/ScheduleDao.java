@@ -16,12 +16,6 @@ import java.util.List;
 
 @Dao
 public interface ScheduleDao {
-    @Query("SELECT * FROM schedules")
-    LiveData<List<Schedule>> findAll();
-
-    @Query("SELECT * FROM schedules WHERE id = :id")
-    Schedule findById(int id);
-
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     long insert(Schedule schedule);
 

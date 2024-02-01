@@ -8,10 +8,6 @@ import com.mmp.ayatsurikun.model.ScheduleAndSignal;
 import java.util.List;
 
 public interface ScheduleRepository {
-    LiveData<List<Schedule>> findAll();
-
-    Schedule findById(int id);
-
     int insert(Schedule schedule) throws Exception;
 
     void update(Schedule schedule);

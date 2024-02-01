@@ -17,8 +17,8 @@ public interface SignalDao {
     @Query("SELECT * FROM signals")
     LiveData<List<Signal>> findAll();
 
-    @Query("SELECT * FROM signals WHERE id = :id")
-    Signal findById(int id);
+    @Query("SELECT * FROM signals")
+    List<Signal> findAllSync();
 
     @Insert
     void insert(Signal signal);

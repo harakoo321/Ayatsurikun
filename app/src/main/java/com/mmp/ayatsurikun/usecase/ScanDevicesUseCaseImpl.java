@@ -23,7 +23,8 @@ public class ScanDevicesUseCaseImpl implements ScanDevicesUseCase {
     public List<Device> scanAllDevices() {
         List<Device> deviceItems = new ArrayList<>();
         for(DeviceRepository deviceRepository : deviceRepositories) {
-            deviceItems.addAll(deviceRepository.scanDevices());
+            List<Device> devices = deviceRepository.scanDevices();
+            if(devices != null) deviceItems.addAll(devices);
         }
         return deviceItems;
     }

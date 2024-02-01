@@ -21,16 +21,6 @@ public class ScheduleRepositoryImpl implements ScheduleRepository {
     }
 
     @Override
-    public LiveData<List<Schedule>> findAll() {
-        return scheduleDao.findAll();
-    }
-
-    @Override
-    public Schedule findById(int id) {
-        return scheduleDao.findById(id);
-    }
-
-    @Override
     public int insert(Schedule schedule) throws Exception {
         return exec.submit(() -> scheduleDao.insert(schedule)).get().intValue();
     }
