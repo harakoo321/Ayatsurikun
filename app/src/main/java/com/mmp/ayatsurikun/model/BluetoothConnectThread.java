@@ -4,6 +4,7 @@ import android.Manifest;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
@@ -77,9 +78,19 @@ public class BluetoothConnectThread extends Thread {
     }
 
     private void checkPermission() throws IOException {
-        if (ActivityCompat.checkSelfPermission(App.ContextProvider.getContext(), Manifest.permission.BLUETOOTH_CONNECT)
-                != PackageManager.PERMISSION_GRANTED) {
-            throw new IOException("Permission denied");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (ActivityCompat.checkSelfPermission(
+                    App.ContextProvider.getContext(),
+                    Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+        } else {
+            if (ActivityCompat.checkSelfPermission(
+                    App.ContextProvider.getContext(),
+                    Manifest.permission.BLUETOOTH) == PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
         }
+        throw new IOException("Permission denied!");
     }
 }

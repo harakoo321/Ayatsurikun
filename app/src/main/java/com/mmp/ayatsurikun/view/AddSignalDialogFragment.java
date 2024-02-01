@@ -2,7 +2,6 @@ package com.mmp.ayatsurikun.view;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.widget.EditText;
 
@@ -28,11 +27,9 @@ public class AddSignalDialogFragment extends DialogFragment {
         builder.setTitle(R.string.dialog_title);
         builder.setMessage(R.string.dialog_msg);
         builder.setView(editText);
-        builder.setPositiveButton(R.string.dialog_btn_ok, (dialog, which) -> {
-            if (which == DialogInterface.BUTTON_POSITIVE) {
-                viewModel.addSignal(editText.getText().toString(), signal);
-            }
-        });
+        builder.setPositiveButton(
+                R.string.dialog_btn_ok,
+                (dialog, which) -> viewModel.addSignal(editText.getText().toString(), signal));
         builder.setNegativeButton(R.string.dialog_btn_ng, (dialog, which) -> viewModel.cancel());
         return builder.create();
     }

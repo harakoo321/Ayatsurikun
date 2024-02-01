@@ -2,14 +2,24 @@ package com.mmp.ayatsurikun.usecase;
 
 import com.mmp.ayatsurikun.model.Device;
 
+import javax.inject.Inject;
+
 public class ConnectionUseCaseImpl implements ConnectionUseCase{
-    private final Device device;
-    public ConnectionUseCaseImpl(Device device) {
-        this.device = device;
+    private Device device;
+
+    @Inject
+    public ConnectionUseCaseImpl() {
     }
+
     @Override
-    public void connect() {
+    public void connect(Device device) {
+        this.device = device;
         device.connect();
+    }
+
+    @Override
+    public void waitUntilConnected() {
+        device.waitUntilConnected();
     }
 
     @Override
