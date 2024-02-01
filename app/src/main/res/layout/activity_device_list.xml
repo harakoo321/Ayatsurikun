@@ -10,10 +10,27 @@
             type="com.mmp.ayatsurikun.viewmodel.DeviceListViewModel" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical"
         tools:context=".view.DeviceListActivity">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/device_list_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary">
+
+            <TextView
+                android:id="@+id/device_list_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/app_name"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
+                android:textStyle="normal" />
+        </androidx.appcompat.widget.Toolbar>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_dev"
@@ -25,5 +42,5 @@
             app:layoutManager="LinearLayoutManager"
             tools:context=".view.DeviceListActivity"
             tools:listitem="@layout/device_item" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 </layout>

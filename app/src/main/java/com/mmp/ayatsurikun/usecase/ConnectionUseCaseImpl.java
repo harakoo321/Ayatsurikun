@@ -1,25 +1,25 @@
 package com.mmp.ayatsurikun.usecase;
 
-import android.content.Context;
-
-import com.mmp.ayatsurikun.App;
 import com.mmp.ayatsurikun.model.Device;
 
 import javax.inject.Inject;
 
-import dagger.hilt.android.qualifiers.ApplicationContext;
-
 public class ConnectionUseCaseImpl implements ConnectionUseCase{
-    private final Device device;
+    private Device device;
 
     @Inject
-    public ConnectionUseCaseImpl(@ApplicationContext Context context) {
-        this.device = ((App)context).getDevice();
+    public ConnectionUseCaseImpl() {
     }
 
     @Override
-    public void connect() {
+    public void connect(Device device) {
+        this.device = device;
         device.connect();
+    }
+
+    @Override
+    public void waitUntilConnected() {
+        device.waitUntilConnected();
     }
 
     @Override

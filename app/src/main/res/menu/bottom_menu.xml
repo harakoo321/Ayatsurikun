@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/bottom_menu_signal"
+        android:icon="@drawable/missing_controller_24px"
+        android:title="@string/signal_title" />
+    <item
+        android:id="@+id/bottom_menu_schedule"
+        android:icon="@drawable/calendar_clock_24px"
+        android:title="@string/schedule_title" />
+</menu>

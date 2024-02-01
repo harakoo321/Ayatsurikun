@@ -86,6 +86,21 @@ public class BluetoothDevice implements Device, BluetoothCommunicationThread.Lis
     }
 
     @Override
+    public boolean isConnected() {
+        return connectThread != null && connectThread.isConnected();
+    }
+
+    @Override
+    public void waitUntilConnected() {
+        if (!connectThread.isAlive()) return;
+        try {
+            connectThread.join();
+        } catch (InterruptedException e) {
+            showToast(R.string.connection_failed);
+        }
+    }
+
+    @Override
     public void disconnect() {
         if (connectThread == null) {
             showToast(R.string.not_connected);

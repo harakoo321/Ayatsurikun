@@ -24,6 +24,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 @AndroidEntryPoint
 public class DeviceListActivity extends AppCompatActivity {
     private DeviceListViewModel deviceListViewModel;
+    private ActivityDeviceListBinding binding;
 
     private final ActivityResultLauncher<String> requestPermissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {});
@@ -31,7 +32,7 @@ public class DeviceListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityDeviceListBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_device_list);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_device_list);
         deviceListViewModel = new ViewModelProvider(this).get(DeviceListViewModel.class);
         binding.setViewModel(deviceListViewModel);
         checkPermission();
@@ -58,6 +59,7 @@ public class DeviceListActivity extends AppCompatActivity {
     }
 
     private void setupViews() {
+        setSupportActionBar(binding.deviceListToolbar);
         RecyclerView recyclerView = findViewById(R.id.recycler_dev);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         DeviceAdapter deviceAdapter = new DeviceAdapter(deviceListViewModel);

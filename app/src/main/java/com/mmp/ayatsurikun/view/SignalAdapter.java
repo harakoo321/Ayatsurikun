@@ -11,15 +11,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.mmp.ayatsurikun.BR;
 import com.mmp.ayatsurikun.databinding.SignalItemBinding;
 import com.mmp.ayatsurikun.model.Signal;
-import com.mmp.ayatsurikun.viewmodel.DeviceControlViewModel;
+import com.mmp.ayatsurikun.viewmodel.SignalListViewModel;
 
 public class SignalAdapter extends ListAdapter<Signal, SignalAdapter.SignalViewHolder> {
-    private final DeviceControlViewModel viewModel;
-    public SignalAdapter(DeviceControlViewModel viewModel) {
+    private final SignalListViewModel viewModel;
+    public SignalAdapter(SignalListViewModel viewModel) {
         super(new DiffUtil.ItemCallback<Signal>() {
             @Override
             public boolean areItemsTheSame(@NonNull Signal oldItem, @NonNull Signal newItem) {
-                return oldItem.getId().equals(newItem.getId());
+                return oldItem.getId() == newItem.getId();
             }
 
             @Override
@@ -49,7 +49,7 @@ public class SignalAdapter extends ListAdapter<Signal, SignalAdapter.SignalViewH
             this.binding = binding;
         }
 
-        private void bind(Signal signal, DeviceControlViewModel viewModel) {
+        private void bind(Signal signal, SignalListViewModel viewModel) {
             binding.setVariable(BR.signal, signal);
             binding.setViewModel(viewModel);
             binding.executePendingBindings();

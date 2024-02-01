@@ -11,6 +11,8 @@ public interface Device {
     LiveData<byte[]> getSignal();
     void clearSignal();
     void connect();
+    boolean isConnected();
+    void waitUntilConnected();
     void disconnect();
     void send(byte[] signal);
     boolean equals(Object o);

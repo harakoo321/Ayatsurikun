@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Ayatsurikun</string>
+    <string name="device_list_title">デバイス一覧</string>
     <string name="btn_send">送信</string>
     <string name="dialog_title">ボタンの追加</string>
     <string name="dialog_msg">信号を受信しました。ボタンを追加するにはボタンの名前を設定してください。</string>
@@ -16,4 +17,12 @@
     <string name="confirm">確認</string>
     <string name="delete_confirm">を削除しますか？</string>
     <string name="delete">削除</string>
+    <string name="schedule_not_found">スケジュールが見つかりませんでした</string>
+    <string name="schedule_title">スケジュール</string>
+    <string name="schedule_add">スケジュールの追加</string>
+    <string name="signal_title">信号</string>
+    <string name="date">日付</string>
+    <string name="time">時間</string>
+    <string name="button">ボタン</string>
+    <string name="invalid_input">入力が不正です</string>
 </resources>
