@@ -76,6 +76,7 @@ public class DeviceControlActivity extends AppCompatActivity {
     }
 
     private void setBottomNavigation() {
+        binding.bottomNav.setBackgroundColor(getResources().getColor(R.color.primary, getTheme()));
         binding.bottomNav.setOnItemSelectedListener(item -> {
             if (item.getItemId() == R.id.bottom_menu_signal) {
                 getSupportFragmentManager().beginTransaction()
